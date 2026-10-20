@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>S2DWGE — BoxMover Arena</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="shell">
+    <header><div><p class="eyebrow">S2DWGE WEB ENGINE</p><h1>BoxMover Arena</h1><p class="sub">A small playable demo built on the modular engine.</p></div><span class="status"><i></i> ENGINE ONLINE</span></header>
+    <section class="game-wrap"><canvas id="game" aria-label="BoxMover Arena game"></canvas><div class="overlay" id="overlay">Click the game to enable sound · WASD / Arrow Keys to move</div></section>
+    <section class="controls"><div><b>MOVE</b><span>WASD / Arrow keys</span></div><div><b>SPRINT</b><span>Hold Shift</span></div><div><b>PAUSE</b><span>Press P</span></div><button id="restart">Restart demo</button></section>
+    <footer><span>JavaScript · HTML5 Canvas · No dependencies</span><span id="readout">X: 0 · Y: 0</span></footer>
+  </main>
+  <script type="module" src="./game.js"></script>
+</body>
+</html>
