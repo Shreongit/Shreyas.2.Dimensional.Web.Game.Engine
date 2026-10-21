@@ -1,8 +1,8 @@
 /** Mouse/touch pointer state in canvas-local backing-store pixels. */
 export class PointerManager {
-  constructor(canvas) {
+  constructor(canvas, { coordinateTransform = null } = {}) {
     if (!canvas?.addEventListener || !canvas?.getBoundingClientRect) throw new TypeError("PointerManager requires a canvas-like event target");
-    this.canvas = canvas; this.x = 0; this.y = 0; this.down = false;
+    this.canvas = canvas; this.coordinateTransform = coordinateTransform; this.x = 0; this.y = 0; this.inside = false; this.down = false;
     this.justPressed = false; this.justReleased = false; this.buttons = new Set();
     this._move = e => this._position(e);
     this._down = e => {
@@ -24,8 +24,14 @@ export class PointerManager {
   _position(e) {
     const r = this.canvas.getBoundingClientRect();
     if (r.width <= 0 || r.height <= 0) return;
-    this.x = (e.clientX - r.left) * (this.canvas.width / r.width);
-    this.y = (e.clientY - r.top) * (this.canvas.height / r.height);
+    if (this.coordinateTransform) {
+      const point = this.coordinateTransform(e.clientX, e.clientY);
+      this.x = point.x; this.y = point.y; this.inside = point.inside ?? true;
+    } else {
+      this.x = (e.clientX - r.left) * (this.canvas.width / r.width);
+      this.y = (e.clientY - r.top) * (this.canvas.height / r.height);
+      this.inside = this.x >= 0 && this.y >= 0 && this.x < this.canvas.width && this.y < this.canvas.height;
+    }
   }
   /** Keep edge events alive until the engine finishes the current frame. */
   update() {}

@@ -35,3 +35,13 @@
 - Clear held pointer-button state and reset frame timing when the document becomes hidden, preventing stuck input and large resume deltas.
 - Added regression tests for scene switching, stop/restart ordering, entity removal/re-addition, and pointer cancellation.
 - This milestone does not claim cross-browser validation; Playwright's Node test runner is not installed in the current working environment.
+
+
+## Unreleased — Graphics and viewport milestone
+
+- Hardened `Viewport` input validation, zero-size handling, capped device-pixel-ratio backing stores, and idempotent disposal.
+- Added logical-to-client and client-to-logical conversion, including an `inside` flag for letterbox/out-of-bounds coordinates.
+- Integrated optional logical-resolution viewport rendering into `Engine` via `viewport: true` or viewport options; default rendering remains unchanged.
+- Added viewport-aware pointer coordinates and `pointer.inside` when the engine viewport is enabled.
+- Added regression tests for viewport fitting, letterboxing, coordinate round-trips, zero-sized canvases, and camera transform round-trips.
+- Documented the viewport setup and camera/pointer coordinate workflow.

@@ -4,10 +4,11 @@ import { AudioManager } from "../audio/AudioManager.js";
 import { PointerManager } from "../input/PointerManager.js";
 import { Profiler } from "./Profiler.js";
 import { Logger } from "./Logger.js";
+import { Viewport } from "../graphics/Viewport.js";
 
 /** Browser game loop with clamped delta time, pause/resume, and explicit disposal. */
 export class Engine {
-  constructor(canvas, { width = 960, height = 540, background = "#10131c", maxDelta = 0.1, fixedDelta = 1 / 60, maxSubSteps = 5, targetFPS = 0, debug = false, audio = true } = {}) {
+  constructor(canvas, { width = 960, height = 540, background = "#10131c", maxDelta = 0.1, fixedDelta = 1 / 60, maxSubSteps = 5, targetFPS = 0, debug = false, audio = true, viewport = false, pixelArt = false } = {}) {
     if (!canvas?.getContext) throw new TypeError("Engine requires a canvas element.");
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
@@ -21,8 +22,9 @@ export class Engine {
     this.maxDelta = maxDelta; this.fixedDelta = fixedDelta; this.maxSubSteps = maxSubSteps;
     this.targetFPS = targetFPS; this.debug = debug;
     canvas.width = width; canvas.height = height;
+    this.viewport = viewport ? new Viewport(canvas, width, height, { ...(typeof viewport === "object" ? viewport : {}), pixelArt: typeof viewport === "object" ? (viewport.pixelArt ?? pixelArt) : pixelArt }) : null;
     this.input = new InputManager();
-    this.pointer = new PointerManager(canvas);
+    this.pointer = new PointerManager(canvas, { coordinateTransform: this.viewport ? (x, y) => this.viewport.toLogical(x, y) : null });
     this.audio = audio ? new AudioManager() : null;
     this.scenes = new SceneManager(this);
     this.running = false; this.paused = false; this.disposed = false;
@@ -90,8 +92,14 @@ export class Engine {
     ctx.save();
     try {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.fillStyle = this.background;
-      ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      if (this.viewport) {
+        this.viewport.begin(ctx);
+        ctx.fillStyle = this.background;
+        ctx.fillRect(0, 0, this.width, this.height);
+      } else {
+        ctx.fillStyle = this.background;
+        ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      }
       this.scenes.render(ctx);
       if (this.debug) this._renderDebug(ctx);
     } finally { ctx.restore(); }
@@ -111,6 +119,7 @@ export class Engine {
     this.scenes.dispose();
     this.input.dispose();
     this.pointer.dispose();
+    this.viewport?.dispose();
     this.audio?.dispose();
     document.removeEventListener("visibilitychange", this._boundVisibility);
     this.disposed = true;
