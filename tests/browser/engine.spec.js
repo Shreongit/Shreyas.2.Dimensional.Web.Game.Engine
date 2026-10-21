@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const base = 'http://127.0.0.1:4173';
+const base = 'http://127.0.0.1:5173';
 test.beforeEach(async ({ page }) => { await page.goto(`${base}/scripts/browser/validation.html`); await page.waitForFunction(() => document.documentElement.dataset.validation !== undefined); });
 test('engine integration validation passes', async ({ page, browserName }) => {
   const data = JSON.parse(await page.locator('#results').innerText());
