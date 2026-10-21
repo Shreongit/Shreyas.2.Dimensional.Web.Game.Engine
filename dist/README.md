@@ -49,7 +49,7 @@ The build writes `dist/` with the native ES-module runtime, package metadata, li
 npx http-server dist
 ```
 
-Then open the server URL and navigate to `/starter-game/`. If you do not have `http-server`, use any static web server. To start a new game, copy `dist/starter-game/` and `dist/engine/` together, preserving their relative paths. The starter demonstrates engine initialization, a scene, an entity, a component, keyboard input, a logical viewport, and disposal/restart patterns. The generated `dist/package.json` identifies the runtime entry point for package-style consumers.
+Then open the server URL and navigate to `/starter-game/`. If you do not have `http-server`, use any static web server. To start a new game, copy `dist/starter-game/` and `dist/engine/` together, preserving their relative paths. The starter demonstrates engine initialization, a scene, an entity, a component, keyboard input, a logical viewport, and disposal/restart patterns. The generated `dist/package.json` identifies the runtime entry point for package-style consumers. The browser CI matrix also opens this generated starter, checks for uncaught JavaScript errors and failed network requests, exercises restart, and resizes the viewport. These checks run in CI after the distribution build; they must pass on the exact release commit before stable sign-off.
 
 `npm run build:check` rebuilds the distribution and checks that the runtime entry, starter assets, license, and relative imports are present. This validates the packaging structure; it does not replace browser testing of the starter game.
 

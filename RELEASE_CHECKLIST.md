@@ -32,3 +32,12 @@ A passing unit suite is necessary but not sufficient for a stable 1.0 release. D
 
 ## Release status
 **Not signed off as stable 1.0.** This repository contains the release-gate tooling and candidate changes, but browser CI has not been run from this environment. Promote to stable only after the unchecked release gates are satisfied; do not infer a pass from tests being configured.
+
+
+## Distribution consumer validation
+
+- [ ] Build `dist/` from the exact release commit.
+- [ ] Open `/dist/starter-game/` in each supported browser.
+- [ ] Verify no uncaught page errors or failed runtime requests.
+- [ ] Verify restart and responsive canvas sizing.
+- [ ] Verify the packed package can be installed/imported from a clean consumer project.

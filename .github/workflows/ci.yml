@@ -29,5 +29,6 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-save @playwright/test
+      - run: npm run build
       - run: npx playwright install --with-deps ${{ matrix.browser }}
       - run: npx playwright test --project=${{ matrix.browser }}

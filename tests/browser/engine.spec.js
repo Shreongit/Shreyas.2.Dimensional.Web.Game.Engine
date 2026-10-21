@@ -21,3 +21,36 @@ for (const viewport of [{width:800,height:600,dpr:1},{width:1365,height:768,dpr:
     await context.close();
   });
 }
+
+
+test('distributed starter game loads, restarts, and stays free of uncaught errors', async ({ page, browserName }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(String(error)));
+  const failedResponses = [];
+  page.on('response', response => {
+    if (response.status() >= 400) failedResponses.push(`${response.status()} ${response.url()}`);
+  });
+
+  await page.goto(`${base}/dist/starter-game/`);
+  await expect(page.locator('#game')).toBeVisible();
+  await expect(page.locator('#status')).toContainText('Ready');
+  await page.locator('#game').focus();
+  await page.keyboard.down('ArrowRight');
+  await page.waitForTimeout(120);
+  await page.keyboard.up('ArrowRight');
+  await page.getByRole('button', { name: 'Restart' }).click();
+  await expect(page.locator('#status')).toContainText('Ready');
+  expect(errors, `${browserName} uncaught errors`).toEqual([]);
+  expect(failedResponses, `${browserName} failed requests`).toEqual([]);
+});
+
+test('distributed starter survives responsive viewport changes', async ({ page, browserName }) => {
+  await page.goto(`${base}/dist/starter-game/`);
+  await expect(page.locator('#status')).toContainText('Ready');
+  for (const viewport of [{ width: 390, height: 844 }, { width: 1280, height: 720 }, { width: 1920, height: 1080 }]) {
+    await page.setViewportSize(viewport);
+    const bounds = await page.locator('#game').boundingBox();
+    expect(bounds?.width ?? 0, `${browserName} canvas width at ${viewport.width}`).toBeGreaterThan(0);
+    expect(bounds?.height ?? 0, `${browserName} canvas height at ${viewport.height}`).toBeGreaterThan(0);
+  }
+});
