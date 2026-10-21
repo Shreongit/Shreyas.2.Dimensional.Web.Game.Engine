@@ -1,270 +1,221 @@
 <div align="center">
   <h1>🎮 S2DWGE</h1>
-
-<h3 align="center">Shreyas's 2 Dimensional Web Game Engine</h3>
-
-<p align="center">
-  A modular 2D game engine built from scratch with JavaScript and HTML5 Canvas.
-</p>
-
-<p align="center">
-  <em>Understand the systems. Build the engine. Bring your game worlds to life.</em>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Status-Release%20Candidate-orange?style=for-the-badge" alt="Release Candidate — not stable 1.0 yet" />
-  <img src="https://img.shields.io/badge/Language-JavaScript-yellow?style=for-the-badge&logo=javascript&logoColor=white" alt="JavaScript" />
-  <img src="https://img.shields.io/badge/Rendering-HTML5%20Canvas-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5 Canvas" />
-  <img src="https://img.shields.io/badge/Modules-ESM-blue?style=for-the-badge" alt="ES Modules" />
-  <img src="https://img.shields.io/badge/License-See%20LICENSE-lightgrey?style=for-the-badge" alt="License" />
-</p>
-
-<p align="center">
-  <a href="#-overview">Overview</a> •
-  <a href="#-architecture">Architecture</a> •
-  <a href="#-features">Features</a> •
-  <a href="#-getting-started">Getting Started</a> •
-  <a href="#-development">Development</a> •
-  <a href="#-roadmap">Roadmap</a>
-</p>
+  <h3>Shreyas's 2 Dimensional Web Game Engine</h3>
+  <p>A modular, JavaScript-based 2D game engine for the web, powered by HTML5 Canvas and ES modules.</p>
+  <p><em>Understand the systems. Build the engine. Bring your game worlds to life.</em></p>
+  <p>
+    <img src="https://img.shields.io/badge/Status-Release%20Candidate-orange?style=for-the-badge" alt="Release Candidate — not stable 1.0" />
+    <img src="https://img.shields.io/badge/JavaScript-ES%20Modules-yellow?style=for-the-badge&logo=javascript&logoColor=white" alt="JavaScript ES modules" />
+    <img src="https://img.shields.io/badge/Rendering-HTML5%20Canvas-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5 Canvas" />
+    <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge" alt="MIT License" />
+  </p>
+  <p>
+    <a href="#-overview">Overview</a> ·
+    <a href="#-features">Features</a> ·
+    <a href="#-getting-started">Getting started</a> ·
+    <a href="#-create-your-first-game">Create a game</a> ·
+    <a href="#-development-and-tests">Development</a> ·
+    <a href="#-release-status">Release status</a>
+  </p>
+</div>
 
 ---
 
-## 📦 API contract and deployment
-
-The named exports are listed in [`docs/API_REFERENCE.md`](docs/API_REFERENCE.md). The API reference is an inventory of the current release-candidate surface, not a promise that every subsystem has finalized semantic-versioning guarantees. Run `npm run test:api` to check that the documented symbols still exist.
-
-For static hosting, module MIME types, HTTPS, Content Security Policy guidance, and deployment checks, see [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
-
 ## 🧭 Overview
 
-**S2DWGE** is an independent 2D game-engine project designed to provide reusable systems for building browser-based games.
+**S2DWGE (Shreyas's 2 Dimensional Web Game Engine)** is an independent, modular engine project for creating 2D games that run in modern web browsers. It is built with JavaScript, HTML5 Canvas, and native ES modules, with a focus on understandable systems, reusable components, and automated verification.
 
-Instead of being tied to a single game, S2DWGE aims to provide a modular foundation for different gameplay styles, from arcade experiences and platformers to top-down adventures and experimental prototypes.
+The project provides building blocks for game loops, scenes, entities and components, rendering, input, animation, audio, asset loading, collision detection, and physics utilities. Use the included examples and starter template as a foundation, then shape the game logic and presentation to fit your project.
 
-The engine brings together core game-development concepts such as rendering, entities, components, scenes, input, animation, audio, physics, collision detection, tilemaps, and particles.
-
-> 💡 **Design philosophy:** Build each subsystem deliberately, test its behavior, and keep the architecture understandable, extensible, and maintainable.
-
-> ⚠️ **Current status:** Release candidate. APIs and subsystem capabilities may evolve before the stable 1.0 release.
-
-## 🏗️ Architecture
-
-S2DWGE is organized into focused modules that separate engine responsibilities and make the codebase easier to develop and test.
-
-```mermaid
-flowchart TD
-    A["S2DWGE Engine"] --> B["Core Systems"]
-    A --> C["Graphics"]
-    A --> D["Input & Audio"]
-    A --> E["Physics & Collision"]
-    A --> F["Asset Management"]
-
-    B --> B1["Engine Lifecycle"]
-    B --> B2["Entities & Components"]
-    B --> B3["Scenes & Timing"]
-
-    C --> C1["Canvas Rendering"]
-    C --> C2["Sprites & Animation"]
-    C --> C3["Camera & Viewport"]
-    C --> C4["Tilemaps & Particles"]
-
-    E --> E1["Physics Bodies"]
-    E --> E2["Collision Queries"]
-    E --> E3["Spatial Partitioning"]
-
-    A --> G["Your 2D Game"]
-```
-
-The diagram represents the intended high-level organization; individual utilities may not all be connected directly to the main engine loop.
+> **Release status:** `1.0.0-rc.2` — release candidate. The project has passed the CI checks listed below, but stable `1.0.0` has not been declared by this archive. Review [Release status](#-release-status) and `RELEASE_CHECKLIST.md` before shipping.
 
 ## ✨ Features
 
-<table>
-  <tr>
-    <td width="50%">
-      <h3>🎨 Graphics & Rendering</h3>
-      <ul>
-        <li>HTML5 Canvas 2D rendering</li>
-        <li>Sprite and animation systems</li>
-        <li>Camera and viewport utilities</li>
-        <li>Tilemap rendering</li>
-        <li>Particle effects</li>
-        <li>Canvas text helpers</li>
-      </ul>
-    </td>
-    <td width="50%">
-      <h3>⚙️ Core Architecture</h3>
-      <ul>
-        <li>Modular ES architecture</li>
-        <li>Entity-component structure</li>
-        <li>Scene management</li>
-        <li>Timers and event utilities</li>
-        <li>Logging and profiling utilities</li>
-        <li>Reusable engine subsystems</li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <h3>🧱 Physics & Collision</h3>
-      <ul>
-        <li>Bounding-box collision utilities</li>
-        <li>Circle and point collision queries</li>
-        <li>Physics bodies and colliders</li>
-        <li>Impulse and gravity support</li>
-        <li>Collision filtering</li>
-        <li>Spatial-hash broad phase</li>
-      </ul>
-    </td>
-    <td width="50%">
-      <h3>🎮 Input, Audio & Assets</h3>
-      <ul>
-        <li>Keyboard and pointer input</li>
-        <li>Audio-management utilities</li>
-        <li>Image and audio loading support</li>
-        <li>Asset reuse across game systems</li>
-        <li>Browser-based execution</li>
-        <li>Automated testing infrastructure</li>
-      </ul>
-    </td>
-  </tr>
-</table>
-
-*Feature availability and behavior depend on the current implementation. See the source and release notes for subsystem limitations.*
-
-## 🛠️ Technology Stack
-
-| Technology | Purpose |
+| Area | Included systems |
 |---|---|
-| JavaScript | Engine implementation |
-| HTML5 Canvas | 2D rendering |
-| ES Modules | Modular code organization |
-| Node.js | Development and testing |
-| npm | Dependency and script management |
-| Playwright | Browser-test infrastructure |
-| GitHub Actions | Continuous integration |
+| **Core** | Engine lifecycle, scenes, entities, components, events, timers, tweens, logging, profiling, and storage utilities |
+| **Rendering** | HTML5 Canvas rendering, sprites, animation, camera and viewport utilities, text helpers, tilemaps, and particles |
+| **Input** | Keyboard input and pointer tracking for browser games |
+| **Physics and collision** | Physics bodies, colliders, collision queries, filtering, and spatial-hash broad-phase utilities |
+| **Assets and audio** | Asset loading and browser audio management |
+| **Developer experience** | ES-module architecture, starter/sample games, API documentation, unit tests, and cross-browser Playwright tests |
 
-## 🚀 Getting Started
+Feature availability and behavior are defined by the current implementation and documented limitations. In particular, do not assume S2DWGE is a full-featured general-purpose rigid-body physics engine; review `docs/API_REFERENCE.md` and the relevant source before depending on specific collision or solver behavior.
 
-### Prerequisites
+## 🏗️ Architecture
 
-- Node.js 18 or newer
-- npm
-- A modern browser with HTML5 Canvas and ES-module support
+The engine is split into focused modules so systems can be explored, tested, and extended independently.
 
-### Installation and initialization
+```mermaid
+flowchart TD
+  A[Your 2D game] --> B[S2DWGE]
+  B --> C[Core and lifecycle]
+  B --> D[Graphics and viewport]
+  B --> E[Input and audio]
+  B --> F[Physics and collision]
+  B --> G[Assets and utilities]
+  C --> C1[Engine, scenes, entities, components]
+  D --> D1[Canvas, sprites, camera, tilemaps, particles]
+  F --> F1[Bodies, colliders, queries, spatial hash]
+```
 
-**Requirements:** Node.js 18 or newer, npm, and a modern browser with HTML5 Canvas and ES-module support.
+See [`docs/API_REFERENCE.md`](docs/API_REFERENCE.md) for the public named exports and subsystem notes. See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for hosting guidance.
 
-Clone the repository and install the development dependencies:
+## 🛠️ Requirements
+
+- **Node.js 18 or newer** (Node.js 20 or 22 are also covered by the configured CI matrix).
+- **npm**, included with Node.js.
+- A modern browser with HTML5 Canvas and ES-module support.
+
+## 🚀 Getting started
+
+### 1. Get the source
 
 ```bash
 git clone https://github.com/Shreongit/Shreyas.2.Dimensional.Web.Game.Engine.git
 cd Shreyas.2.Dimensional.Web.Game.Engine
+```
+
+### 2. Install dependencies
+
+```bash
 npm ci
 ```
 
-Start the local server:
+This installs the development dependencies from the lockfile. A successful setup requires the command to finish successfully; if the npm registry is unreachable, restore network access and retry.
+
+### 3. Start the local demo server
 
 ```bash
 npm run serve
 ```
 
-Open the local URL printed by the server. The repository example is in `examples/box-mover/`; the generated distribution also includes `dist/starter-game/` and `dist/sample-game/`. Serve these files over HTTP rather than opening ES-module files directly with `file://`.
+Open the URL printed in the terminal (by default, `http://localhost:5173`). The server redirects the root page to the `examples/box-mover/` demo. Use HTTP rather than opening an HTML file directly with `file://`, because browser ES-module loading expects a web server.
 
-If `npm ci` fails because the npm registry cannot be reached, check your network connection and retry; do not treat an incomplete install as a successful setup.
+### 4. Try the included games
 
-### Initialize a game
+- **Repository demo:** `examples/box-mover/`
+- **Starter template:** `templates/starter-game/`
+- **Generated starter game:** `dist/starter-game/` (after building)
+- **Generated sample game:** `dist/sample-game/` (after building)
 
-The most reliable starting point is the complete starter template: `templates/starter-game/` (or `dist/starter-game/` after building). Copy the template into your game project and adapt its `index.html`, `style.css`, and `game.js`. Keep the ES-module imports and relative paths intact, then run the game through a local HTTP server.
+Build the generated distribution with:
 
-For development, run `npm run build` to regenerate the distribution. The public named exports are listed in [`docs/API_REFERENCE.md`](docs/API_REFERENCE.md); consult the examples and API reference for the actual constructors and options supported by this release candidate. APIs are still subject to change before stable 1.0.
+```bash
+npm run build
+```
 
-## 🧪 Development
+Then serve the repository or `dist/` directory using an HTTP server and open the appropriate game path. The built sample game is available at `/sample-game/` when serving `dist/` as the web root.
 
-Run the configured local checks:
+## 🎮 Create your first game
+
+The recommended starting point is `templates/starter-game/`. Copy the template into your own project and customize `index.html`, `style.css`, and `game.js`. Keep the relative module paths intact, or update them consistently if you reorganize the files.
+
+The starter demonstrates creating an engine, registering a scene, adding an entity and component, moving a player using keyboard input, and restarting the game. Its imports use the template's bundled engine path; the public package API and supported exports are documented in `docs/API_REFERENCE.md`.
+
+For example, the public API can be imported from the package when it is installed in a consumer project:
+
+```js
+import { Engine, Scene, Entity, Component } from "s2dwge";
+```
+
+For a repository checkout, consult the API reference for the correct relative import path. This snippet illustrates the package's named-export style; it is not a complete runnable game by itself.
+
+## 🧪 Development and tests
+
+Run the syntax checks and unit/regression suite:
 
 ```bash
 npm run ci
 ```
 
-Run unit tests:
+Run the other configured verification tasks individually:
 
 ```bash
-npm test
+npm run build:check
+npm run test:api
+npm run test:soak
+npm run test:consumer
 ```
 
-Run browser tests when the browser-test dependencies are installed:
+Run browser tests:
 
 ```bash
 npx playwright install
 npm run test:browser
 ```
 
-Run the benchmark if included in your checkout:
+Run the benchmark utility:
 
 ```bash
 npm run benchmark
 ```
 
-Test results validate the scenarios covered by the suite. They do not guarantee that every possible game, browser, physics interaction, or workload is supported.
+`npm run test:browser` uses Playwright and its configured browser projects. Browser binaries must be installed first. `npm run test:consumer` checks that a packed package can be installed into an isolated temporary consumer and that key exports can be imported. A passing test suite is evidence for the scenarios it covers, not a guarantee that every game, browser version, or workload will behave identically.
 
-## 📁 Project Structure
+## 📁 Project layout
 
 ```text
 S2DWGE/
-├── .github/
-│   └── workflows/
-├── examples/
-│   └── box-mover/
-├── scripts/
-├── src/
-├── tests/
+├── .github/workflows/       # GitHub Actions CI
+├── docs/                    # API, deployment, and release verification docs
+├── examples/                # Repository demos
+├── scripts/                 # Serve, build, checks, benchmark, consumer smoke test
+├── src/                     # Engine source and public entry point
+├── templates/               # Starter-game template
+├── tests/                   # Unit, API, lifecycle, and distribution tests
+├── dist/                    # Generated distribution and sample games
+├── CHANGELOG.md
 ├── CONTRIBUTING.md
 ├── LICENSE
-├── README.md
+├── package.json
 ├── RELEASE_CHECKLIST.md
+├── RELEASE_STATUS.md
 └── SECURITY.md
 ```
 
-The `src/` directory contains the engine implementation, `examples/` demonstrates its use, and `tests/` contains automated checks.
+The `dist/` directory is generated output. If you change source files, run `npm run build` and review the resulting distribution before packaging a release.
 
-## 🗺️ Release readiness
+## 📚 Documentation
 
-- [x] Modular engine foundation and core graphics/input systems
-- [x] Physics and collision utilities with documented AABB-focused limitations
-- [x] Unit, API-contract, distribution, lifecycle-soak, and packed-consumer checks
-- [x] GitHub Actions browser matrix passed for Chromium, Firefox, and WebKit on the pushed commit (see the repository's Checks tab)
-- [x] GitHub Actions unit matrix passed for Node.js 18, 20, and 22 on the pushed commit
-- [ ] Complete network-backed clean-install and dependency-audit review
-- [ ] Review and sign off remaining release checklist items and known limitations
-- [ ] Promote from `1.0.0-rc.2` to stable `1.0.0` only after explicit release sign-off
+- [`docs/API_REFERENCE.md`](docs/API_REFERENCE.md) — public exports, subsystem overview, and lifecycle guidance.
+- [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) — static hosting and deployment guidance.
+- [`CHANGELOG.md`](CHANGELOG.md) — recorded project changes and release history.
+- [`RELEASE_STATUS.md`](RELEASE_STATUS.md) — current release-candidate verification status.
+- [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md) — remaining release gates.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — contribution guidance.
+- [`SECURITY.md`](SECURITY.md) — security reporting guidance.
 
-**Current package version:** `1.0.0-rc.2` (release candidate, not yet stable 1.0). See [`RELEASE_STATUS.md`](RELEASE_STATUS.md) and [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md) for the current gates.
+## ✅ Release status
+
+The maintainer-provided GitHub Actions screenshot shows all six push checks passing:
+
+- Chromium browser tests
+- Firefox browser tests
+- WebKit browser tests
+- Unit-test matrix for Node.js 18
+- Unit-test matrix for Node.js 20
+- Unit-test matrix for Node.js 22
+
+Local verification recorded for this release-candidate archive also includes syntax/unit checks, distribution checks, API-contract checks, lifecycle soak checks, packed-consumer validation, package dry-run, and a 27-test browser run. See `RELEASE_STATUS.md` for the scope and qualifications of that evidence.
+
+Before declaring stable `1.0.0`, complete the network-enabled clean install and dependency audit, review documented limitations and remaining checklist items, rebuild and rerun checks after release metadata changes, and obtain maintainer sign-off. **Passing CI does not, by itself, mean the stable release has been published.**
 
 ## 🤝 Contributing
 
-Contributions, bug reports, and focused feature proposals are welcome.
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes. Include reproduction steps for bugs and tests for changed behavior.
+Bug reports, reproducible issues, and focused improvements are welcome. Please read [`CONTRIBUTING.md`](CONTRIBUTING.md), include reproduction steps for bugs, and add tests for changed behavior where practical.
 
 ## 🔐 Security
 
-For security-related concerns, consult [SECURITY.md](SECURITY.md).
+For security-related concerns, follow the instructions in [`SECURITY.md`](SECURITY.md).
 
 ## 📄 License
 
-See the repository's [LICENSE](LICENSE) file for the applicable terms and permissions.
+S2DWGE declares the MIT license in its package metadata. Read the repository's [`LICENSE`](LICENSE) file for the applicable terms.
 
 ---
 
-<p align="center">
+<div align="center">
   <strong>S2DWGE</strong><br />
   <em>Understand the engine. Build the game. Create your world.</em>
-</p>
-
-
-### Complete sample game
-
-The generated `dist/sample-game/` folder contains Starfall Survival, a small playable example demonstrating custom components, keyboard input, dynamic entities, collision/game-over handling, pause, and restart. Build with `npm run build`, serve `dist/` over HTTP, and open `/sample-game/`.
+</div>
