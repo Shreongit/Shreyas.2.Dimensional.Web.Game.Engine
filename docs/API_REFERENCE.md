@@ -97,3 +97,8 @@ This demonstrates the entity/component relationship and scene ownership. It does
 ## Stability notice
 
 S2DWGE remains a release candidate until the release checklist is satisfied. This reference lists the current named exports; it does not imply every subsystem has a finalized semantic-versioning guarantee.
+
+
+## Complete sample game
+
+The generated distribution includes `sample-game/`, a small playable survival game demonstrating scene lifecycle, custom components, keyboard movement, entity spawning/removal, rendering, pause handling, and restart/disposal. Serve the generated `dist/` directory over HTTP, then open `/sample-game/`. The sample is an integration example, not a promise that every game genre or physics workload is supported.

@@ -19,6 +19,7 @@ await fs.rm(out, { recursive: true, force: true });
 await fs.mkdir(out, { recursive: true });
 await copyTree(path.join(root, "src"), path.join(out, "engine"));
 await fs.cp(path.join(root, "templates", "starter-game"), path.join(out, "starter-game"), { recursive: true });
+await fs.cp(path.join(root, "templates", "sample-game"), path.join(out, "sample-game"), { recursive: true });
 await fs.copyFile(path.join(root, "LICENSE"), path.join(out, "LICENSE"));
 await fs.copyFile(path.join(root, "README.md"), path.join(out, "README.md"));
 const manifest = {
@@ -32,4 +33,4 @@ const manifest = {
 };
 await fs.writeFile(path.join(out, "package.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 console.log(`Built S2DWGE distribution at ${path.relative(root, out)}`);
-console.log("Includes native ES-module runtime, starter game, package metadata, README and license.");
+console.log("Includes native ES-module runtime, starter game, complete sample game, package metadata, README and license.");

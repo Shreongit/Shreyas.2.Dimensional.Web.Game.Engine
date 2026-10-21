@@ -1,3 +1,9 @@
+## Unreleased — Sample game and release readiness
+
+- Added Starfall Survival, a complete playable sample game demonstrating custom components, keyboard movement, dynamically spawned hazards, collision/game-over handling, pause, and restart.
+- Included the sample game in the generated distribution and added a regression test for its files and runtime import.
+- Expanded API documentation and release checklist with sample-game and dependency-review gates.
+
 # Changelog
 
 ## Unreleased — Asset and audio reliability

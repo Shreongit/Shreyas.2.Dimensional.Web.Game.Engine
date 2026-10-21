@@ -41,3 +41,12 @@ A passing unit suite is necessary but not sufficient for a stable 1.0 release. D
 - [ ] Verify no uncaught page errors or failed runtime requests.
 - [ ] Verify restart and responsive canvas sizing.
 - [ ] Verify the packed package can be installed/imported from a clean consumer project.
+
+
+## Sample game and consumer readiness
+- [ ] Build and open `dist/sample-game/` in Chromium, Firefox, and WebKit.
+- [x] Include a complete sample game with movement, dynamic hazards, collision/game-over state, pause, and restart.
+- [x] Add distribution tests for sample-game files and relative runtime imports.
+- [ ] Verify gameplay interaction and restart in the browser matrix on the release commit.
+- [ ] Run `npm audit` (or an equivalent dependency review) against the release lockfile and record the result; do not interpret absence of runtime dependencies as a substitute for reviewing development dependencies.
+- [ ] Review CSP/deployment notes, browser compatibility policy, and API examples before stable sign-off.

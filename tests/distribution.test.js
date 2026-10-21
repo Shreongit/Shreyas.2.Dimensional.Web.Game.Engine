@@ -29,3 +29,20 @@ test("distribution starter imports a runtime file included in distribution", asy
   assert.ok(importPath, "starter game should have an explicit runtime import");
   await fs.access(path.resolve(root, "dist/starter-game", importPath));
 });
+
+
+test("distribution includes the complete sample game and its runtime import resolves", async () => {
+  const sampleDir = path.join(root, "dist/sample-game");
+  const [html, game, css] = await Promise.all([
+    fs.readFile(path.join(sampleDir, "index.html"), "utf8"),
+    fs.readFile(path.join(sampleDir, "game.js"), "utf8"),
+    fs.readFile(path.join(sampleDir, "style.css"), "utf8")
+  ]);
+  assert.match(html, /Starfall Survival/);
+  assert.match(html, /type="module"/);
+  assert.match(game, /from "\.\.\/engine\/index\.js"/);
+  assert.match(game, /spawnHazard/);
+  assert.match(game, /finish\(\)/);
+  assert.match(css, /canvas/);
+  await fs.access(path.resolve(sampleDir, "../engine/index.js"));
+});

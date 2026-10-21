@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080d18">
+  <title>Starfall Survival — S2DWGE Sample Game</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="shell">
+    <header><p class="eyebrow">S2DWGE · COMPLETE SAMPLE GAME</p><h1>Starfall Survival</h1><p>Dodge the falling meteors. Survive as long as you can.</p></header>
+    <canvas id="game" aria-label="Starfall Survival game area" tabindex="0"></canvas>
+    <footer><span id="status" role="status" aria-live="polite">Loading…</span><button id="restart" type="button">Restart run</button></footer>
+    <p class="help">Move with <kbd>WASD</kbd> or <kbd>← ↑ ↓ →</kbd>. Press <kbd>P</kbd> to pause. Click the game to focus it.</p>
+  </main>
+  <script type="module" src="./game.js"></script>
+</body>
+</html>

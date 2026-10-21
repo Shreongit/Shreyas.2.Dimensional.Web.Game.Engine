@@ -256,3 +256,8 @@ See the repository's [LICENSE](LICENSE) file for the applicable terms and permis
   <strong>S2DWGE</strong><br />
   <em>Understand the engine. Build the game. Create your world.</em>
 </p>
+
+
+### Complete sample game
+
+The generated `dist/sample-game/` folder contains Starfall Survival, a small playable example demonstrating custom components, keyboard input, dynamic entities, collision/game-over handling, pause, and restart. Build with `npm run build`, serve `dist/` over HTTP, and open `/sample-game/`.
