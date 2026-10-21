@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Fixed swept-AABB collision normal selection to use the axis with the later entry time, preventing diagonal impacts from resolving along the wrong axis.
+- Treated static and disabled physics bodies as zero-velocity, immovable solver participants so stale velocity cannot inject momentum and disabled bodies are not repositioned by collision resolution.
+- Added regression tests for diagonal swept impacts, static-body velocity, and disabled-body solver behavior.
+
 ## 1.0.0-rc.2 — 2026-10-21
 
 - Added a browser validation page for Canvas rendering, engine disposal, viewport coordinate conversion, fast impacts, triggers/layer filters, and physics stress.

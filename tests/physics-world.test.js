@@ -117,3 +117,59 @@ test("stacked-body stress remains finite and respects a static floor", () => {
     assert.ok(entity.y < 220, `body fell through floor at y=${entity.y}`);
   }
 });
+
+test("continuous collision detection chooses the axis with the later entry time", () => {
+  const scene = new Scene("ccd-corner");
+  scene.physics.gravity.x = 0;
+  scene.physics.gravity.y = 0;
+  const moving = addBody(scene, {
+    x: -20,
+    y: -20,
+    body: { vx: 2400, vy: 1800, friction: 0 },
+    collider: {}
+  });
+  addBody(scene, { x: 0, y: 0, body: null, collider: {} });
+
+  // The body moves (40, 30) during this simulated tick. It enters the
+  // expanded obstacle on Y later than X, so the collision normal is vertical.
+  moving.body.previousX = -20;
+  moving.body.previousY = -20;
+  moving.entity.x = 20;
+  moving.entity.y = 10;
+
+  let collision;
+  scene.physics.onCollisionEnter = event => { collision = event; };
+  scene.physics.step();
+
+  assert.ok(collision, "expected the swept corner impact to be detected");
+  assert.equal(collision.normalX, 0);
+  assert.equal(collision.normalY, -1);
+  assert.ok(Math.abs(moving.body.vx - 2400) < 1e-8, "tangential velocity should be preserved without friction");
+  assert.ok(Math.abs(moving.body.vy) < 1e-8, "velocity into the obstacle should be removed");
+});
+
+test("static body velocity does not impart momentum to dynamic bodies", () => {
+  const scene = new Scene("static-velocity");
+  scene.physics.gravity.x = 0;
+  scene.physics.gravity.y = 0;
+  const moving = addBody(scene, { x: 0, body: { vx: 0, friction: 0 } });
+  addBody(scene, { x: 8, body: { static: true, vx: -100, friction: 0 } });
+
+  scene.physics.step();
+
+  assert.equal(moving.body.vx, 0);
+});
+
+test("disabled physics bodies are treated as immovable by the solver", () => {
+  const scene = new Scene("disabled-body");
+  scene.physics.gravity.x = 0;
+  scene.physics.gravity.y = 0;
+  const disabled = addBody(scene, { x: 0 });
+  addBody(scene, { x: 8, body: null });
+  disabled.body.enabled = false;
+
+  scene.physics.step();
+
+  assert.equal(disabled.entity.x, 0);
+  assert.equal(disabled.body.vx, 0);
+});

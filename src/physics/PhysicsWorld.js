@@ -35,6 +35,7 @@ export class PhysicsWorld {
     const b = c.bounds;
     return [b.x,b.y,b.width,b.height].every(Number.isFinite) && b.width >= 0 && b.height >= 0;
   }
+  _moves(body) { return Boolean(body && body.enabled && !body.static); }
   _key(a,b) { return a._physicsId < b._physicsId ? `${a._physicsId}:${b._physicsId}` : `${b._physicsId}:${a._physicsId}`; }
   _emit(callback, event) {
     if (!callback) return;
@@ -86,7 +87,7 @@ export class PhysicsWorld {
   }
   _sweptBounds(c) {
     const b=c.bounds, body=c.entity.getComponent(PhysicsBody);
-    if (!this.enableCCD || !body || body.static) return b;
+    if (!this.enableCCD || !this._moves(body)) return b;
     const dx=c.entity.x-body.previousX, dy=c.entity.y-body.previousY;
     return {x:b.x-dx/2,y:b.y-dy/2,width:b.width+Math.abs(dx),height:b.height+Math.abs(dy)};
   }
@@ -102,10 +103,10 @@ export class PhysicsWorld {
   }
   _sweepAABB(a,b) {
     const A=a.bounds,B=b.bounds, bodyA=a.entity.getComponent(PhysicsBody), bodyB=b.entity.getComponent(PhysicsBody);
-    const dxA=bodyA && !bodyA.static ? a.entity.x-bodyA.previousX : 0;
-    const dyA=bodyA && !bodyA.static ? a.entity.y-bodyA.previousY : 0;
-    const dxB=bodyB && !bodyB.static ? b.entity.x-bodyB.previousX : 0;
-    const dyB=bodyB && !bodyB.static ? b.entity.y-bodyB.previousY : 0;
+    const dxA=this._moves(bodyA) ? a.entity.x-bodyA.previousX : 0;
+    const dyA=this._moves(bodyA) ? a.entity.y-bodyA.previousY : 0;
+    const dxB=this._moves(bodyB) ? b.entity.x-bodyB.previousX : 0;
+    const dyB=this._moves(bodyB) ? b.entity.y-bodyB.previousY : 0;
     const dx=dxA-dxB,dy=dyA-dyB;
     if (dx===0 && dy===0) return null;
     const startBX=B.x-dxB, startBY=B.y-dyB;
@@ -118,13 +119,22 @@ export class PhysicsWorld {
     else { tx1=(expanded.left-x0)/dx; tx2=(expanded.right-x0)/dx; }
     if (dy===0) { if (y0<expanded.top || y0>expanded.bottom) return null; ty1=-Infinity;ty2=Infinity; }
     else { ty1=(expanded.top-y0)/dy; ty2=(expanded.bottom-y0)/dy; }
-    const entry=Math.max(Math.min(tx1,tx2),Math.min(ty1,ty2)), exit=Math.min(Math.max(tx1,tx2),Math.max(ty1,ty2));
+    const xEntry=Math.min(tx1,tx2), xExit=Math.max(tx1,tx2);
+    const yEntry=Math.min(ty1,ty2), yExit=Math.max(ty1,ty2);
+    const entry=Math.max(xEntry,yEntry), exit=Math.min(xExit,yExit);
     if (entry<0 || entry>1 || entry>exit) return null;
-    return Math.abs(tx1-tx2)<Math.abs(ty1-ty2) ? {nx:dx>0?-1:1,ny:0,penetration:0,toi:entry} : {nx:0,ny:dy>0?-1:1,penetration:0,toi:entry};
+
+    // The collision normal belongs to the axis whose slab is entered last.
+    // Comparing entry/exit interval lengths is incorrect for diagonal motion:
+    // a wide interval can begin earlier than a narrower one and still lose.
+    const useX = xEntry > yEntry || (xEntry === yEntry && Math.abs(dx) >= Math.abs(dy));
+    return useX
+      ? {nx:dx>0?-1:1,ny:0,penetration:0,toi:entry}
+      : {nx:0,ny:dy>0?-1:1,penetration:0,toi:entry};
   }
   _resolveSweep(a,b,hit) {
     const bodyA=a.entity.getComponent(PhysicsBody), bodyB=b.entity.getComponent(PhysicsBody);
-    const moveA=bodyA&&!bodyA.static, moveB=bodyB&&!bodyB.static;
+    const moveA=this._moves(bodyA), moveB=this._moves(bodyB);
     const invA=moveA?1/bodyA.mass:0,invB=moveB?1/bodyB.mass:0,total=invA+invB;
     if (!total) return;
     if (moveA) { a.entity.x=bodyA.previousX+(a.entity.x-bodyA.previousX)*hit.toi; a.entity.y=bodyA.previousY+(a.entity.y-bodyA.previousY)*hit.toi; }
@@ -135,7 +145,7 @@ export class PhysicsWorld {
   }
   _resolve(a,b,hit) {
     const bodyA=a.entity.getComponent(PhysicsBody),bodyB=b.entity.getComponent(PhysicsBody);
-    const moveA=bodyA&&!bodyA.static,moveB=bodyB&&!bodyB.static;
+    const moveA=this._moves(bodyA),moveB=this._moves(bodyB);
     const invA=moveA?1/bodyA.mass:0,invB=moveB?1/bodyB.mass:0,total=invA+invB;
     if (!total) return;
     const correction=Math.max(hit.penetration-this.penetrationSlop,0)*this.positionCorrection/total;
@@ -147,7 +157,10 @@ export class PhysicsWorld {
   }
   _applyImpulse(a,b,nx,ny,invA,invB) {
     const total=invA+invB;if(!total)return;
-    const avx=a?.vx??0,avy=a?.vy??0,bvx=b?.vx??0,bvy=b?.vy??0;
+    // Static or disabled bodies have zero solver velocity: their stored velocity
+    // must not impart momentum because they are not integrated or moved.
+    const avx=invA>0?(a?.vx??0):0,avy=invA>0?(a?.vy??0):0;
+    const bvx=invB>0?(b?.vx??0):0,bvy=invB>0?(b?.vy??0):0;
     const rvx=avx-bvx,rvy=avy-bvy,along=rvx*nx+rvy*ny;
     if (along>0) return;
     const restitution=Math.max(a?.bounce??0,b?.bounce??0);
