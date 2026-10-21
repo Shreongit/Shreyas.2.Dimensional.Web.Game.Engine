@@ -22,6 +22,7 @@ await fs.cp(path.join(root, "templates", "starter-game"), path.join(out, "starte
 await fs.cp(path.join(root, "templates", "sample-game"), path.join(out, "sample-game"), { recursive: true });
 await fs.copyFile(path.join(root, "LICENSE"), path.join(out, "LICENSE"));
 await fs.copyFile(path.join(root, "README.md"), path.join(out, "README.md"));
+await fs.cp(path.join(root, "docs"), path.join(out, "docs"), { recursive: true });
 const manifest = {
   name: "s2dwge-distribution",
   version: JSON.parse(await fs.readFile(path.join(root, "package.json"), "utf8")).version,

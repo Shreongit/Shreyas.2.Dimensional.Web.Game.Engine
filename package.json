@@ -13,6 +13,7 @@
     "test:browser": "playwright test",
     "build": "node scripts/build.mjs",
     "build:check": "npm run build && node --test tests/distribution.test.js",
+    "test:api": "node --test tests/api-contract.test.js",
     "test:soak": "node --test tests/lifecycle-soak.test.js"
   },
   "engines": {

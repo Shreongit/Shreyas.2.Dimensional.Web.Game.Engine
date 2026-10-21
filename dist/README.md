@@ -29,6 +29,12 @@
 
 ---
 
+## 📦 API contract and deployment
+
+The named exports are listed in [`docs/API_REFERENCE.md`](docs/API_REFERENCE.md). The API reference is an inventory of the current release-candidate surface, not a promise that every subsystem has finalized semantic-versioning guarantees. Run `npm run test:api` to check that the documented symbols still exist.
+
+For static hosting, module MIME types, HTTPS, Content Security Policy guidance, and deployment checks, see [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+
 ## 🧭 Overview
 
 **S2DWGE** is an independent 2D game-engine project designed to provide reusable systems for building browser-based games.

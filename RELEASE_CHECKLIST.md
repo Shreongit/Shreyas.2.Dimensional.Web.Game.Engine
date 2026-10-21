@@ -50,3 +50,15 @@ A passing unit suite is necessary but not sufficient for a stable 1.0 release. D
 - [ ] Verify gameplay interaction and restart in the browser matrix on the release commit.
 - [ ] Run `npm audit` (or an equivalent dependency review) against the release lockfile and record the result; do not interpret absence of runtime dependencies as a substitute for reviewing development dependencies.
 - [ ] Review CSP/deployment notes, browser compatibility policy, and API examples before stable sign-off.
+
+
+## API contract and supply-chain review (current milestone)
+- [x] Add automated checks that the documented public export names exist.
+- [x] Document static deployment, MIME types, HTTPS, CSP starting guidance, and client-trust boundaries.
+- [ ] Add and review a committed lockfile so clean installs can use `npm ci` reproducibly.
+- [ ] Run `npm audit` or equivalent against the committed lockfile and review each finding.
+- [ ] Verify the package from a clean consumer directory using a packed artifact, not only repository-relative imports.
+- [ ] Confirm CSP guidance against the final starter/sample game and real browser behavior.
+
+## Evidence note
+A local attempt to run `npm ci` is currently blocked because the checkout has no `package-lock.json`. Generating the lockfile timed out in the current environment; no lockfile or audit result is claimed by this milestone. Do not promote to stable until this is resolved in a network-enabled environment and reviewed.
