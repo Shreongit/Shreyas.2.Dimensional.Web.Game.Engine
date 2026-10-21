@@ -1,4 +1,5 @@
-# 🎮 S2DWGE
+<div align="center">
+  <h1>🎮 S2DWGE</h1>
 
 <h3 align="center">Shreyas's 2 Dimensional Web Game Engine</h3>
 

@@ -18,6 +18,7 @@ A passing unit suite is necessary but not sufficient for a stable 1.0 release. D
 - [ ] Limitations are accepted: AABB-only colliders; no angular velocity/rotational rigid-body solver, joints, general convex shapes, or full tilemap contact solver. CCD currently targets translating AABBs and is not a general continuous physics guarantee.
 
 ## Graphics, viewport, and memory
+- [x] Node-level viewport regressions cover letterboxing, high-DPI coordinate round-trips, zero-size recovery, observer cleanup, and invalid configuration.
 - [x] Viewport integration tests cover 800x600, 1365x768, 1920x1080, 390x844@2x, and 1440x900@3x in the browser suite.
 - [ ] Browser suite passes on each supported browser and DPR configuration.
 - [ ] Reference-device benchmark results and performance budgets are recorded; timings are machine-dependent and must not be generalized from one host.

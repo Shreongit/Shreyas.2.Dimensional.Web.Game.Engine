@@ -1,3 +1,10 @@
+## Unreleased — Viewport test hardening milestone
+
+- Reworked viewport unit tests to restore global browser mocks safely, including when assertions fail.
+- Added wide-layout letterboxing and transform assertions, explicit CSS-client-coordinate semantics, and high-DPI coordinate round-trip coverage.
+- Added zero-sized canvas recovery, observer disposal/idempotency, and invalid configuration regression tests.
+- This milestone strengthens deterministic Node-level viewport coverage; it does not replace the required Chromium, Firefox, and WebKit run.
+
 ## Unreleased — Sample game and release readiness
 
 - Added Starfall Survival, a complete playable sample game demonstrating custom components, keyboard movement, dynamically spawned hazards, collision/game-over handling, pause, and restart.
