@@ -1,7 +1,7 @@
 {
   "name": "s2dwge",
   "version": "1.0.0-rc.2",
-  "description": "S2DWGE (Shreyas's 2 Dimensional Web Game Engine) \u2014 a modular JavaScript 2D game engine for the browser.",
+  "description": "S2DWGE (Shreyas's 2 Dimensional Web Game Engine) — a modular JavaScript 2D game engine for the browser.",
   "type": "module",
   "private": false,
   "scripts": {
@@ -10,7 +10,9 @@
     "check": "node scripts/check.mjs",
     "ci": "npm run check && npm test",
     "benchmark": "node scripts/benchmark.mjs",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "build": "node scripts/build.mjs",
+    "build:check": "npm run build && node --test tests/distribution.test.js"
   },
   "engines": {
     "node": ">=18"
@@ -18,5 +20,24 @@
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.55.0"
-  }
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src/",
+    "dist/",
+    "templates/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "2d-game-engine",
+    "canvas",
+    "browser-game",
+    "game-development",
+    "javascript"
+  ]
 }

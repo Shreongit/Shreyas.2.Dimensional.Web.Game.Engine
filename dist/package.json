@@ -1,0 +1,14 @@
+{
+  "name": "s2dwge-distribution",
+  "version": "1.0.0-rc.2",
+  "description": "S2DWGE browser runtime and vanilla JavaScript starter game",
+  "type": "module",
+  "exports": "./engine/index.js",
+  "files": [
+    "engine",
+    "starter-game",
+    "LICENSE",
+    "README.md"
+  ],
+  "license": "MIT"
+}

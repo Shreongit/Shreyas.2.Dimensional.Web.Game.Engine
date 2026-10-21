@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — Asset and audio reliability
+
+- Hardened asset manifests with validation, default image typing for object entries, deterministic per-asset progress, and aggregated failures when `continueOnError: false` is selected.
+- Made missing browser image support an explicit asset error instead of a hanging or opaque failure.
+- Hardened audio volume/configuration validation, playback source cleanup, concurrent load/disposal handling, and idempotent asynchronous disposal.
+- Added automated asset-loader and mocked Web Audio lifecycle regression tests.
+
 ## Unreleased
 
 - Fixed swept-AABB collision normal selection to use the axis with the later entry time, preventing diagonal impacts from resolving along the wrong axis.
