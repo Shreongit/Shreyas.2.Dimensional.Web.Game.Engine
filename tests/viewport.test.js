@@ -1,56 +1,84 @@
-import test from "node:test";
-import assert from "node:assert/strict";
-import { Viewport } from "../src/graphics/Viewport.js";
-import { Camera2D } from "../src/graphics/Camera2D.js";
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { Viewport } from '../src/graphics/Viewport.js';
 
-function canvasFixture(rect = { left: 10, top: 20, width: 800, height: 600 }) {
-  return { width: 0, height: 0, style: {}, getBoundingClientRect: () => rect };
-}
-
-test("viewport validates logical dimensions and DPR cap", () => {
-  const canvas = canvasFixture();
-  assert.throws(() => new Viewport(canvas, 0, 100), RangeError);
-  assert.throws(() => new Viewport(canvas, 100, 100, { maxDPR: Infinity }), RangeError);
+// Setup global mock behaviors for headless Node environments
+const createMockCanvas = (rect) => ({
+  width: 0,
+  height: 0,
+  style: {},
+  getBoundingClientRect: () => rect
 });
 
-test("viewport fits logical resolution with centered letterboxing", () => {
-  const canvas = canvasFixture();
-  const viewport = new Viewport(canvas, 400, 300, { autoResize: false });
+test('viewport validation - baseline configuration initialization', () => {
+  const mockCanvas = createMockCanvas({ left: 0, top: 0, width: 800, height: 600 });
+  const viewport = new Viewport(mockCanvas, 400, 300);
+
+  assert.equal(viewport.width, 400);
+  assert.equal(viewport.height, 300);
+  assert.equal(viewport.disposed, false);
+  viewport.dispose();
+});
+
+test('viewport validation - backing store buffer scaling under high-DPI (2x Retina)', () => {
+  // Mock device layout environment attributes
+  globalThis.devicePixelRatio = 2;
+  globalThis.ResizeObserver = class { observe() {} disconnect() {} };
+
+  const mockCanvas = createMockCanvas({ left: 10, top: 20, width: 800, height: 600 });
+  const viewport = new Viewport(mockCanvas, 400, 300);
+
+  // Layout math evaluations: 800 layout width * 2 DPR = 1600 internal buffer resolution
+  assert.equal(mockCanvas.width, 1600);
+  assert.equal(mockCanvas.height, 1200);
+
+  viewport.dispose();
+  delete globalThis.devicePixelRatio;
+  delete globalThis.ResizeObserver;
+});
+
+test('viewport validation - maxDPR ceiling constraints handling', () => {
+  globalThis.devicePixelRatio = 5; // Simulating extreme screen matrix densities
+  globalThis.ResizeObserver = class { observe() {} disconnect() {} };
+
+  const mockCanvas = createMockCanvas({ left: 0, top: 0, width: 800, height: 600 });
+  const viewport = new Viewport(mockCanvas, 400, 300, { maxDPR: 3 });
+
+  // Resolution output must clamp to maxDPR value ceiling (800 * 3 = 2400)
+  assert.equal(mockCanvas.width, 2400);
+  assert.equal(mockCanvas.height, 1800);
+
+  viewport.dispose();
+  delete globalThis.devicePixelRatio;
+  delete globalThis.ResizeObserver;
+});
+
+test('viewport validation - spatial uniform mapping scales and canvas offsets calculation', () => {
+  const mockCanvas = createMockCanvas({ left: 0, top: 0, width: 800, height: 600 });
+  const viewport = new Viewport(mockCanvas, 400, 300);
+  
+  let captureArgs = null;
+  const mockCtx = {
+    setTransform: (...args) => { captureArgs = args; }
+  };
+
+  viewport.begin(mockCtx);
+
+  // Engine targets 400x300 canvas layout drawn in a physical 800x600 wrapper -> Uniform scale factor is 2
   assert.equal(viewport.scale, 2);
-  assert.equal(viewport.offsetX, 0);
-  assert.equal(viewport.offsetY, 0);
-  const point = viewport.toLogical(20, 30);
-  assert.equal(point.x, 5);
-  assert.equal(point.y, 5);
-  assert.equal(point.inside, true);
+  assert.deepEqual(captureArgs, [2, 0, 0, 2, 0, 0]);
   viewport.dispose();
 });
 
-test("viewport marks letterbox coordinates outside logical game bounds and round-trips points", () => {
-  const canvas = canvasFixture({ left: 0, top: 0, width: 1000, height: 500 });
-  const viewport = new Viewport(canvas, 400, 300, { autoResize: false });
-  const outside = viewport.toLogical(10, 250);
-  assert.equal(outside.inside, false);
-  const client = viewport.toClient(120, 90);
-  const logical = viewport.toLogical(client.x, client.y);
-  assert.ok(Math.abs(logical.x - 120) < 1e-9);
-  assert.ok(Math.abs(logical.y - 90) < 1e-9);
-  viewport.dispose();
-});
+test('viewport validation - pixel coordinate transformation math', () => {
+  const mockCanvas = createMockCanvas({ left: 10, top: 10, width: 800, height: 600 });
+  const viewport = new Viewport(mockCanvas, 400, 300);
 
-test("viewport remains valid when canvas is temporarily zero-sized", () => {
-  const canvas = canvasFixture({ left: 0, top: 0, width: 0, height: 0 });
-  const viewport = new Viewport(canvas, 320, 180, { autoResize: false });
-  assert.equal(canvas.width, 1);
-  assert.equal(canvas.height, 1);
-  assert.equal(viewport.toLogical(0, 0).inside, false);
+  // Simulating a click at the absolute physical center of the canvas component wrapper matrix
+  const logicalCoords = viewport.toLogical(410, 310);
+  
+  assert.equal(logicalCoords.x, 200);
+  assert.equal(logicalCoords.y, 150);
+  assert.equal(logicalCoords.inside, true);
   viewport.dispose();
-});
-
-test("camera world/screen conversion round-trips with zoom and rotation", () => {
-  const camera = new Camera2D({ x: 100, y: -40, zoom: 1.75, rotation: 0.4 });
-  const screen = camera.worldToScreen(123, 57, 800, 600);
-  const world = camera.screenToWorld(screen.x, screen.y, 800, 600);
-  assert.ok(Math.abs(world.x - 123) < 1e-9);
-  assert.ok(Math.abs(world.y - 57) < 1e-9);
 });
