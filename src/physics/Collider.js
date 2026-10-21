@@ -8,7 +8,7 @@ export class Collider extends Component {
     if (width !== null && (!Number.isFinite(width) || width < 0)) throw new RangeError("Collider width must be null or non-negative");
     if (height !== null && (!Number.isFinite(height) || height < 0)) throw new RangeError("Collider height must be null or non-negative");
     if (!Number.isFinite(offsetX) || !Number.isFinite(offsetY)) throw new TypeError("Collider offsets must be finite");
-    if (!Number.isInteger(layer) || layer < 0 || !Number.isInteger(mask) || mask < 0) throw new RangeError("Collision layer and mask must be non-negative integers");
+    if (!Number.isInteger(layer) || layer < 0 || layer > 0xffffffff || !Number.isInteger(mask) || mask < 0 || mask > 0xffffffff) throw new RangeError("Collision layer and mask must be unsigned 32-bit integers");
     this.width = width; this.height = height; this.offsetX = offsetX; this.offsetY = offsetY;
     this.isTrigger = Boolean(isTrigger); this.layer = layer; this.mask = mask;
   }

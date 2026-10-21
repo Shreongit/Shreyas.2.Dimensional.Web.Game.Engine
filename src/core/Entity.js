@@ -2,7 +2,11 @@ import { Collider } from "../physics/Collider.js";
 /** Game object with transform, tags, and composable behaviors. */
 export class Entity {
   constructor({ name = "Entity", x = 0, y = 0, width = 0, height = 0, tag = "", renderOrder = 0 } = {}) {
-    this.name = name;
+    for (const [key, value] of Object.entries({ x, y, width, height })) {
+      if (!Number.isFinite(value)) throw new TypeError(`Entity ${key} must be finite`);
+    }
+    if (width < 0 || height < 0) throw new RangeError("Entity width and height must be non-negative");
+    this.name = String(name);
     this.x = x; this.y = y;
     this.width = width; this.height = height;
     this.rotation = 0; this.scaleX = 1; this.scaleY = 1;
@@ -20,19 +24,28 @@ export class Entity {
     if (component.entity) throw new Error("Component is already attached to an entity.");
     component.entity = this;
     this.components.push(component);
-    component.onAttach();
-    if (this.scene && component instanceof Collider) this.scene.physics.add(component);
-    if (this._started) component.start();
-    return component;
+    try {
+      component.onAttach();
+      if (this.scene && component instanceof Collider) this.scene.physics.add(component);
+      if (this._started) component.start();
+      return component;
+    } catch (error) {
+      if (this.scene && component instanceof Collider) this.scene.physics.remove(component);
+      const index = this.components.indexOf(component);
+      if (index >= 0) this.components.splice(index, 1);
+      component.entity = null;
+      try { component.onDetach(); } catch { /* Preserve the original attach/start error. */ }
+      throw error;
+    }
   }
   getComponent(Type) { return this.components.find(c => c instanceof Type) ?? null; }
   removeComponent(component) {
     const i = this.components.indexOf(component);
     if (i < 0) return false;
-    component.onDetach();
+    this.components.splice(i, 1);
     if (this.scene && component instanceof Collider) this.scene.physics.remove(component);
     component.entity = null;
-    this.components.splice(i, 1);
+    component.onDetach();
     return true;
   }
   start() {

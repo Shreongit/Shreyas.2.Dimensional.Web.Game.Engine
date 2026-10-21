@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { Animation } from "../src/graphics/Animation.js";
 import { Collision } from "../src/physics/Collision.js";
 import { PhysicsBody } from "../src/physics/PhysicsBody.js";
 import { Camera2D } from "../src/graphics/Camera2D.js";
@@ -37,4 +38,25 @@ test("particle emitter creates and expires particles", () => {
   const emitter = new ParticleEmitter({rate:0,life:[.1,.1],speed:[0,0],size:[2,2]});
   emitter.emit(3); assert.equal(emitter.particles.length,3);
   emitter.update(.2); assert.equal(emitter.particles.length,0);
+});
+
+test("animation rejects non-finite frame duration and invalid delta", () => {
+  assert.throws(() => new Animation([1], { frameDuration: Infinity }), RangeError);
+  const animation = new Animation([1]);
+  assert.throws(() => animation.update(NaN), RangeError);
+});
+
+test("camera rejects invalid zoom and non-finite transforms", () => {
+  assert.throws(() => new Camera2D({ zoom: 0 }), RangeError);
+  assert.throws(() => new Camera2D({ x: Infinity }), TypeError);
+});
+
+test("spatial hash validates bounds and safely handles oversized entries", async () => {
+  const { SpatialHash } = await import("../src/physics/SpatialHash.js");
+  const hash = new SpatialHash(10, { maxCellsPerEntry: 4 });
+  const large = {};
+  hash.insert(large, { x: 0, y: 0, width: 1000, height: 1000 });
+  assert.ok(hash.query({ x: 5000, y: 5000, width: 1, height: 1 }).includes(large));
+  assert.throws(() => hash.insert({}, { x: NaN, y: 0, width: 1, height: 1 }), TypeError);
+  assert.throws(() => new SpatialHash(Infinity), RangeError);
 });

@@ -14,10 +14,13 @@ export class PhysicsBody extends Component {
     this.bounce = Math.max(0, Math.min(1, bounce));
     this.friction = Math.max(0, Math.min(1, friction));
     this.grounded = false;
+    this.previousX = 0; this.previousY = 0;
     this._forceX = 0; this._forceY = 0;
   }
+  onAttach() { this.previousX = this.entity.x; this.previousY = this.entity.y; }
   update(dt) {
     if (this.static || !this.enabled) return;
+    this.previousX = this.entity.x; this.previousY = this.entity.y;
     const gravity = this.entity.scene?.physics?.gravity ?? { x: 0, y: 0 };
     this.vx += (gravity.x * this.gravityScale + this._forceX / this.mass) * dt;
     this.vy += (gravity.y * this.gravityScale + this._forceY / this.mass) * dt;

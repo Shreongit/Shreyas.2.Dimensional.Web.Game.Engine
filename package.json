@@ -1,6 +1,6 @@
 {
   "name": "s2dwge",
-  "version": "1.0.0",
+  "version": "1.0.0-rc.1",
   "description": "S2DWGE (Shreyas's 2 Dimensional Web Game Engine) — a modular JavaScript 2D game engine for the browser.",
   "type": "module",
   "private": false,

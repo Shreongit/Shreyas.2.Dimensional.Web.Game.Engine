@@ -1,6 +1,8 @@
 /** Camera transforms world coordinates into the canvas viewport. */
 export class Camera2D {
   constructor({ x = 0, y = 0, zoom = 1, rotation = 0, smoothing = 0 } = {}) {
+    for (const [name,value] of Object.entries({x,y,zoom,rotation,smoothing})) if (!Number.isFinite(value)) throw new TypeError(`${name} must be finite`);
+    if (zoom <= 0) throw new RangeError("zoom must be greater than zero");
     this.x = x; this.y = y; this.zoom = zoom; this.rotation = rotation; this.smoothing = Math.max(0, Math.min(1, smoothing));
     this.target = null;
   }

@@ -79,3 +79,41 @@ test("collider bounds account for entity scale and scaled offsets", () => {
   collider.entity.scaleX = 2; collider.entity.scaleY = 3;
   assert.deepEqual(collider.bounds, { x:14, y:17, width:16, height:18 });
 });
+
+test("continuous collision detection prevents a fast body crossing a thin wall", () => {
+  const scene = new Scene("ccd"); scene.physics.gravity.y = 0;
+  const fast = addBody(scene, { x: -100, width: 10, height: 10, body: { vx: 12000 }, collider: {} });
+  addBody(scene, { x: 0, width: 4, height: 100, body: null });
+  // Simulate a single 1/60 s displacement (200 world units).
+  fast.body.previousX = fast.entity.x;
+  fast.entity.x += fast.body.vx / 60;
+  scene.physics.step();
+  assert.ok(fast.entity.x < 0, `fast body tunneled through wall: x=${fast.entity.x}`);
+  assert.ok(Math.abs(fast.body.vx) < 1e-8, `normal velocity should be removed: vx=${fast.body.vx}`);
+});
+
+test("collision events include stable pair identity and contact normal", () => {
+  const scene = new Scene("contact-info"); scene.physics.gravity.y = 0;
+  addBody(scene, { x: 0 }); addBody(scene, { x: 8, body: null });
+  let event;
+  scene.physics.onCollisionEnter = value => { event = value; };
+  scene.physics.step();
+  assert.ok(event.key);
+  assert.ok(Number.isFinite(event.normalX) && Number.isFinite(event.normalY));
+  assert.equal(event.phase, "enter");
+});
+
+test("stacked-body stress remains finite and respects a static floor", () => {
+  const scene = new Scene("stress"); scene.physics.gravity.y = 900;
+  addBody(scene, { x:0, y:200, width:300, height:20, body:null });
+  const bodies=[];
+  for (let i=0;i<12;i++) bodies.push(addBody(scene, { x:(i%3)*22-22, y:-i*24, width:20, height:20 }));
+  for (let frame=0;frame<360;frame++) {
+    for (const entity of [...scene.entities]) entity.update(1/60);
+    scene.physics.step();
+  }
+  for (const {entity} of bodies) {
+    assert.ok(Number.isFinite(entity.x) && Number.isFinite(entity.y));
+    assert.ok(entity.y < 220, `body fell through floor at y=${entity.y}`);
+  }
+});

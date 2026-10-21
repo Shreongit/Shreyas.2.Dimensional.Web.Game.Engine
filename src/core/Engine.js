@@ -17,6 +17,7 @@ export class Engine {
     if (!Number.isFinite(maxDelta) || maxDelta <= 0) throw new RangeError("maxDelta must be a positive finite number");
     if (!Number.isFinite(fixedDelta) || fixedDelta <= 0) throw new RangeError("fixedDelta must be a positive finite number");
     if (!Number.isInteger(maxSubSteps) || maxSubSteps < 1) throw new RangeError("maxSubSteps must be a positive integer");
+    if (!Number.isFinite(targetFPS) || targetFPS < 0 || (targetFPS > 0 && targetFPS < 1) || targetFPS > 1000) throw new RangeError("targetFPS must be 0 (uncapped) or between 1 and 1000");
     this.maxDelta = maxDelta; this.fixedDelta = fixedDelta; this.maxSubSteps = maxSubSteps;
     this.targetFPS = targetFPS; this.debug = debug;
     canvas.width = width; canvas.height = height;
@@ -25,7 +26,7 @@ export class Engine {
     this.audio = audio ? new AudioManager() : null;
     this.scenes = new SceneManager(this);
     this.running = false; this.paused = false; this.disposed = false;
-    this._raf = 0; this._lastTime = 0; this._accumulator = 0;
+    this._raf = 0; this._lastTime = 0; this._lastRenderTime = -Infinity; this._accumulator = 0;
     this._boundFrame = t => this._frame(t);
     this._boundVisibility = () => { if (document.hidden) this.input.clear(); };
     document.addEventListener("visibilitychange", this._boundVisibility);
@@ -34,7 +35,7 @@ export class Engine {
     if (this.disposed) throw new Error("Cannot start a disposed engine.");
     if (sceneName) this.scenes.switchTo(sceneName);
     if (!this.running) {
-      this.running = true; this.paused = false; this._lastTime = 0;
+      this.running = true; this.paused = false; this._lastTime = 0; this._lastRenderTime = -Infinity;
       this._raf = requestAnimationFrame(this._boundFrame);
     }
     return this;
@@ -70,7 +71,11 @@ export class Engine {
     }
     this.input.clearTransient();
     this.pointer.clearTransient();
-    this._render();
+    const renderInterval = this.targetFPS > 0 ? 1000 / this.targetFPS : 0;
+    if (renderInterval === 0 || timestamp - this._lastRenderTime >= renderInterval) {
+      this._render();
+      this._lastRenderTime = timestamp;
+    }
     this._raf = requestAnimationFrame(this._boundFrame);
   }
   _render() {

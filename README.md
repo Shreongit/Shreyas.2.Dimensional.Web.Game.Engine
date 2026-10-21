@@ -4,15 +4,15 @@
 
 S2DWGE is a modular JavaScript 2D game-engine foundation for modern browsers. It uses HTML5 Canvas and native ES modules, has no runtime dependencies, and includes a playable demo and automated Node.js tests.
 
-> **Project status:** advanced prototype / early-stage engine. This repository is not yet a fully production-certified engine. Browser integration, performance under load, accessibility, packaging and game-specific behavior still require validation before shipping a commercial game.
+> **Project status:** `1.0.0-rc.1` release candidate. Core systems have expanded automated regression coverage, but this is not a claim of production certification. Browser integration across supported engines, reference performance benchmarks, and full release sign-off remain outstanding. See `CHANGELOG.md` and `RELEASE_CHECKLIST.md`.
 
 ## Systems
 
-- **Runtime:** fixed-step simulation accumulator, clamped frame delta, bounded catch-up steps, pause/resume, lifecycle disposal, frame-time profiler and debug overlay.
+- **Runtime:** fixed-step simulation accumulator, clamped frame delta, bounded catch-up steps, pause/resume, optional render-rate cap, lifecycle disposal, frame-time profiler and debug overlay.
 - **World model:** entities, components, scenes and scene switching.
 - **Graphics:** sprites, animation, text and rectangle components, stable render-order layers, exception-safe canvas state, camera transforms, logical viewport fitting, tilemap drawing and particles.
 - **Input:** keyboard state/actions and pointer state.
-- **Physics:** mass-aware forces and impulses, gravity/drag/speed limits, scaled AABB colliders, collision layer/mask filtering, grid broad-phase candidate generation, iterative positional correction, restitution, trigger contacts and enter/stay/exit events, plus overlap helpers and ray-vs-AABB.
+- **Physics:** mass-aware forces and impulses, gravity/drag/speed limits, scaled AABB colliders, collision layer/mask filtering, grid broad-phase candidate generation, iterative positional correction, normal/friction impulses, swept-AABB continuous collision detection for fast translating bodies, trigger contacts and enter/stay/exit events with contact normals, plus overlap helpers and ray-vs-AABB.
 - **Assets/audio:** image and audio manifest loader with progress/errors; optional Web Audio wrapper.
 - **Utilities:** event emitter, logger, profiler, timers, tweens and namespaced JSON storage.
 - **Tests:** Node test coverage for selected utility and engine logic.
@@ -59,7 +59,7 @@ scene.add(player);
 scene.physics.gravity.y = 900;
 ```
 
-The included solver is a lightweight AABB solver, not a full rigid-body engine. It does not yet provide continuous collision detection, rotational inertia, joints, shape casts, one-way platforms, slope handling, or guarantees for stable stacking. Fast-moving bodies may still tunnel through thin colliders. Run the automated tests and validate the target browser/game workload before shipping.
+The included solver is a lightweight AABB solver, not a full rigid-body engine. Continuous collision detection covers swept AABB motion for translating bodies, but does not solve rotational motion or guarantee every complex high-speed multi-body case. The engine does not yet provide rotational inertia, joints, general shape casts, one-way platforms, slope handling, or guarantees for stable stacking. Run automated tests and validate the target browser/game workload before shipping.
 
 ## Project structure
 
@@ -79,10 +79,10 @@ scripts/      Local development server
 
 ## Release-readiness work still required
 
-This is a stronger release candidate, not a production certification. Before declaring a stable 1.0 release, address these items:
+This repository is a main-release candidate, not a claim of production certification. Before declaring a stable 1.0 release, address these items:
 
 1. Add browser-based integration tests and CI across Chromium, Firefox and WebKit.
-2. Finish robust collision resolution, continuous collision detection, and documented physics ordering.
+2. Expand collision stress tests for stacking, corner cases, multi-body impacts, and continuous-collision edge cases; document physics ordering and solver limits.
 3. Add gamepad input, focus/accessibility handling, audio lifecycle tests and error reporting.
 4. Add asset atlas tooling, cache invalidation, content validation and preload failure policy.
 5. Add a real sample game with levels, collisions, menus and save/load.

@@ -2,7 +2,7 @@
 export class Animation {
   constructor(frames, { frameDuration = 0.1, loop = true } = {}) {
     if (!Array.isArray(frames) || frames.length === 0) throw new TypeError("Animation requires at least one frame.");
-    if (!(frameDuration > 0)) throw new RangeError("frameDuration must be positive.");
+    if (!Number.isFinite(frameDuration) || frameDuration <= 0) throw new RangeError("frameDuration must be a positive finite number.");
     this.frames = frames; this.frameDuration = frameDuration; this.loop = loop;
     this.elapsed = 0; this.index = 0; this.finished = false;
   }
@@ -10,7 +10,8 @@ export class Animation {
   reset() { this.elapsed = 0; this.index = 0; this.finished = false; return this; }
   update(dt) {
     if (this.finished) return;
-    this.elapsed += Math.max(0, dt);
+    if (!Number.isFinite(dt) || dt < 0) throw new RangeError("Animation dt must be a finite non-negative number.");
+    this.elapsed += dt;
     const steps = Math.floor(this.elapsed / this.frameDuration);
     if (!steps) return;
     this.elapsed -= steps * this.frameDuration;

@@ -54,3 +54,16 @@ test("asset loader records a missing URL without hanging progress", async () => 
   assert.equal(loader.errors.length, 1);
   assert.equal(loader.progress, 1);
 });
+test("entity rejects non-finite and negative dimensions", () => {
+  assert.throws(() => new Entity({ x: NaN }), TypeError);
+  assert.throws(() => new Entity({ width: -1 }), RangeError);
+});
+
+test("failed component attachment rolls back ownership and registration", () => {
+  class Broken extends Component { onAttach() { throw new Error("attach failed"); } }
+  const entity = new Entity();
+  const component = new Broken();
+  assert.throws(() => entity.addComponent(component), /attach failed/);
+  assert.equal(entity.components.includes(component), false);
+  assert.equal(component.entity, null);
+});
