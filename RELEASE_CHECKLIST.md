@@ -80,3 +80,12 @@ A `package-lock.json` has now been generated and included. A local `npm ci` atte
 - [ ] `npm ci` on the repository lockfile still needs a successful network-enabled CI run; the local attempt timed out while registry access was unavailable.
 - [ ] `npm audit` still needs a successful registry-backed run and review; the local audit failed to reach `registry.npmjs.org` (`EAI_AGAIN`).
 - [ ] Playwright browser matrix still requires a compatible Playwright Test CLI and successful Chromium, Firefox, and WebKit runs on the exact release commit. The local `npm run test:browser` currently reports `unknown command 'test'`.
+
+
+## Release verification checkpoint (2026-10-21)
+- [x] Re-ran `npm run ci` on Node.js v22.16.0: 51 JavaScript files checked and 71/71 tests passed.
+- [x] Re-ran build, API contract tests (3/3), lifecycle soak test (1/1), packed consumer smoke test, and `npm pack --dry-run`.
+- [ ] Network-enabled `npm ci` remains unverified; offline install failed because `playwright-core@1.64.1` is not cached.
+- [ ] Registry-backed `npm audit` remains required. Offline audit returned zero findings, but is not accepted as authoritative evidence.
+- [ ] Browser tests remain unverified: available Playwright CLI reports `unknown command 'test'`; run with the project's installed `@playwright/test` CLI in CI.
+- [ ] Do not publish stable 1.0 until these gates and real-browser sample-game checks are complete. See `docs/RELEASE_VERIFICATION_2026-10-21.md` for exact outcomes.
