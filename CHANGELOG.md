@@ -52,3 +52,10 @@
 - Added viewport-aware pointer coordinates and `pointer.inside` when the engine viewport is enabled.
 - Added regression tests for viewport fitting, letterboxing, coordinate round-trips, zero-sized canvases, and camera transform round-trips.
 - Documented the viewport setup and camera/pointer coordinate workflow.
+
+
+## Unreleased — API and lifecycle validation
+
+- Added `docs/API_REFERENCE.md` documenting the current public entry-point exports and subsystem boundaries.
+- Added a lifecycle soak regression test covering 250 scene create/start/update/remove/dispose cycles with eight entities per scene. The test verifies balanced component start/stop/detach calls and no retained scene ownership.
+- Added `npm run test:soak` for targeted lifecycle stress validation.

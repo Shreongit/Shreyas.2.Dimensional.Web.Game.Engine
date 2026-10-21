@@ -12,7 +12,8 @@
     "benchmark": "node scripts/benchmark.mjs",
     "test:browser": "playwright test",
     "build": "node scripts/build.mjs",
-    "build:check": "npm run build && node --test tests/distribution.test.js"
+    "build:check": "npm run build && node --test tests/distribution.test.js",
+    "test:soak": "node --test tests/lifecycle-soak.test.js"
   },
   "engines": {
     "node": ">=18"
