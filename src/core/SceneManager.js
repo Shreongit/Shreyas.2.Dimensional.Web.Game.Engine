@@ -11,7 +11,7 @@ export class SceneManager {
     const next = this.scenes.get(name);
     if (!next) throw new Error(`Unknown scene: ${name}`);
     if (next === this.current) return next;
-    if (this.current) this.current.onStop();
+    if (this.current) this.current.stop();
     this.current = next;
     next.engine = this.engine;
     next.start();

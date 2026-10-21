@@ -53,6 +53,13 @@ export class Entity {
     this._started = true;
     for (const component of this.components) component.start();
   }
+  stop() {
+    if (!this._started) return;
+    this._started = false;
+    for (const component of [...this.components].reverse()) {
+      if (typeof component.stop === "function") component.stop();
+    }
+  }
   update(dt) {
     if (!this.active || this._destroyed) return;
     for (const component of [...this.components]) if (component.enabled) component.update(dt);
@@ -71,6 +78,7 @@ export class Entity {
   }
   destroy() {
     if (this._destroyed) return;
+    this.stop();
     this._destroyed = true;
     for (const component of [...this.components]) this.removeComponent(component);
     if (this.scene) this.scene.remove(this);

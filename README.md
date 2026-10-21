@@ -1,258 +1,89 @@
-# 🎮 S2DWGE
+# S2DWGE — Shreyas's 2 Dimensional Web Game Engine
 
-<h3 align="center">Shreyas's 2 Dimensional Web Game Engine</h3>
+**S2DWGE** stands for **Shreyas's 2 Dimensional Web Game Engine**.
 
-<p align="center">
-  A modular 2D game engine built from scratch with JavaScript and HTML5 Canvas.
-</p>
+S2DWGE is a modular JavaScript 2D game-engine foundation for modern browsers. It uses HTML5 Canvas and native ES modules, has no runtime dependencies, and includes a playable demo and automated Node.js tests.
 
-<p align="center">
-  <em>Understand the systems. Build the engine. Bring your game worlds to life.</em>
-</p>
+> **Project status:** `1.0.0-rc.2` release candidate. This version adds cross-browser Playwright test infrastructure, viewport/DPR checks, and a repeatable physics benchmark. The browser matrix could not be executed in the authoring environment, so the engine is not signed off as stable 1.0. See `CHANGELOG.md` and `RELEASE_CHECKLIST.md`.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Status-Release%20Candidate-orange?style=for-the-badge" alt="Release Candidate" />
-  <img src="https://img.shields.io/badge/Language-JavaScript-yellow?style=for-the-badge&logo=javascript&logoColor=white" alt="JavaScript" />
-  <img src="https://img.shields.io/badge/Rendering-HTML5%20Canvas-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5 Canvas" />
-  <img src="https://img.shields.io/badge/Modules-ESM-blue?style=for-the-badge" alt="ES Modules" />
-  <img src="https://img.shields.io/badge/License-See%20LICENSE-lightgrey?style=for-the-badge" alt="License" />
-</p>
+## Systems
 
-<p align="center">
-  <a href="#-overview">Overview</a> •
-  <a href="#-architecture">Architecture</a> •
-  <a href="#-features">Features</a> •
-  <a href="#-getting-started">Getting Started</a> •
-  <a href="#-development">Development</a> •
-  <a href="#-roadmap">Roadmap</a>
-</p>
+- **Runtime:** fixed-step simulation accumulator, clamped frame delta, bounded catch-up steps, pause/resume, optional render-rate cap, lifecycle disposal, frame-time profiler and debug overlay.
+- **World model:** entities, components, scenes and scene switching.
+- **Graphics:** sprites, animation, text and rectangle components, stable render-order layers, exception-safe canvas state, camera transforms, logical viewport fitting, tilemap drawing and particles.
+- **Input:** keyboard state/actions and pointer state.
+- **Physics:** mass-aware forces and impulses, gravity/drag/speed limits, scaled AABB colliders, collision layer/mask filtering, grid broad-phase candidate generation, iterative positional correction, normal/friction impulses, swept-AABB continuous collision detection for fast translating bodies, trigger contacts and enter/stay/exit events with contact normals, plus overlap helpers and ray-vs-AABB.
+- **Assets/audio:** image and audio manifest loader with progress/errors; optional Web Audio wrapper.
+- **Utilities:** event emitter, logger, profiler, timers, tweens and namespaced JSON storage.
+- **Tests:** Node test coverage for selected utility and engine logic.
 
----
+## Requirements and commands
 
-## 🧭 Overview
-
-**S2DWGE** is an independent 2D game-engine project designed to provide reusable systems for building browser-based games.
-
-Instead of being tied to a single game, S2DWGE aims to provide a modular foundation for different gameplay styles, from arcade experiences and platformers to top-down adventures and experimental prototypes.
-
-The engine brings together core game-development concepts such as rendering, entities, components, scenes, input, animation, audio, physics, collision detection, tilemaps, and particles.
-
-> 💡 **Design philosophy:** Build each subsystem deliberately, test its behavior, and keep the architecture understandable, extensible, and maintainable.
-
-> ⚠️ **Current status:** Release candidate. APIs and subsystem capabilities may evolve before the stable 1.0 release.
-
-## 🏗️ Architecture
-
-S2DWGE is organized into focused modules that separate engine responsibilities and make the codebase easier to develop and test.
-
-```mermaid
-flowchart TD
-    A["S2DWGE Engine"] --> B["Core Systems"]
-    A --> C["Graphics"]
-    A --> D["Input & Audio"]
-    A --> E["Physics & Collision"]
-    A --> F["Asset Management"]
-
-    B --> B1["Engine Lifecycle"]
-    B --> B2["Entities & Components"]
-    B --> B3["Scenes & Timing"]
-
-    C --> C1["Canvas Rendering"]
-    C --> C2["Sprites & Animation"]
-    C --> C3["Camera & Viewport"]
-    C --> C4["Tilemaps & Particles"]
-
-    E --> E1["Physics Bodies"]
-    E --> E2["Collision Queries"]
-    E --> E3["Spatial Partitioning"]
-
-    A --> G["Your 2D Game"]
-```
-
-The diagram represents the intended high-level organization; individual utilities may not all be connected directly to the main engine loop.
-
-## ✨ Features
-
-<table>
-  <tr>
-    <td width="50%">
-      <h3>🎨 Graphics & Rendering</h3>
-      <ul>
-        <li>HTML5 Canvas 2D rendering</li>
-        <li>Sprite and animation systems</li>
-        <li>Camera and viewport utilities</li>
-        <li>Tilemap rendering</li>
-        <li>Particle effects</li>
-        <li>Canvas text helpers</li>
-      </ul>
-    </td>
-    <td width="50%">
-      <h3>⚙️ Core Architecture</h3>
-      <ul>
-        <li>Modular ES architecture</li>
-        <li>Entity-component structure</li>
-        <li>Scene management</li>
-        <li>Timers and event utilities</li>
-        <li>Logging and profiling utilities</li>
-        <li>Reusable engine subsystems</li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <h3>🧱 Physics & Collision</h3>
-      <ul>
-        <li>Bounding-box collision utilities</li>
-        <li>Circle and point collision queries</li>
-        <li>Physics bodies and colliders</li>
-        <li>Impulse and gravity support</li>
-        <li>Collision filtering</li>
-        <li>Spatial-hash broad phase</li>
-      </ul>
-    </td>
-    <td width="50%">
-      <h3>🎮 Input, Audio & Assets</h3>
-      <ul>
-        <li>Keyboard and pointer input</li>
-        <li>Audio-management utilities</li>
-        <li>Image and audio loading support</li>
-        <li>Asset reuse across game systems</li>
-        <li>Browser-based execution</li>
-        <li>Automated testing infrastructure</li>
-      </ul>
-    </td>
-  </tr>
-</table>
-
-*Feature availability and behavior depend on the current implementation. See the source and release notes for subsystem limitations.*
-
-## 🛠️ Technology Stack
-
-| Technology | Purpose |
-|---|---|
-| JavaScript | Engine implementation |
-| HTML5 Canvas | 2D rendering |
-| ES Modules | Modular code organization |
-| Node.js | Development and testing |
-| npm | Dependency and script management |
-| Playwright | Browser-test infrastructure |
-| GitHub Actions | Continuous integration |
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 18 or newer
-- npm
-- A modern browser with HTML5 Canvas and ES-module support
-
-### Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/Shreongit/Shreyas.2.Dimensional.Web.Game.Engine.git
-cd Shreyas.2.Dimensional.Web.Game.Engine
-```
-
-Install the development dependencies:
-
-```bash
-npm install
-```
-
-Start the local development server:
-
-```bash
-npm run serve
-```
-
-Open the local address printed in your terminal and navigate to the BoxMover Arena example if it is not opened automatically.
-
-### Your First Game
-
-S2DWGE is intended to support reusable game projects rather than a single fixed game. A typical project will initialize the engine, create scenes, add entities and components, load assets, process player input, and render gameplay.
-
-For the exact initialization sequence and public APIs, start with the working example and the corresponding source modules. API stability is not guaranteed for every subsystem yet.
-
-## 🧪 Development
-
-Run the configured local checks:
-
-```bash
-npm run ci
-```
-
-Run unit tests:
+Requires Node.js 18 or newer.
 
 ```bash
 npm test
-```
-
-Run browser tests when the browser-test dependencies are installed:
-
-```bash
-npx playwright install
-npm run test:browser
-```
-
-Run the benchmark if included in your checkout:
-
-```bash
+npm run check
+npm run serve
 npm run benchmark
 ```
 
-Test results validate the scenarios covered by the suite. They do not guarantee that every possible game, browser, physics interaction, or workload is supported.
+Open <http://localhost:5173>. Move with WASD or arrow keys, hold Shift to sprint, and press P to pause/resume. Use a local HTTP server; browser ES module imports may not work from `file://`.
 
-## 📁 Project Structure
+For cross-browser integration tests, install the development dependency and browser binaries, then run `npm run test:browser`. The configured matrix targets Chromium, Firefox, and WebKit. `npm run benchmark` reports workload timings and process memory for comparison; timings are machine-specific.
 
-```text
-S2DWGE/
-├── .github/
-│   └── workflows/
-├── examples/
-│   └── box-mover/
-├── scripts/
-├── src/
-├── tests/
-├── CONTRIBUTING.md
-├── LICENSE
-├── README.md
-├── RELEASE_CHECKLIST.md
-└── SECURITY.md
+## Load custom artwork
+
+Place images inside the game project and serve them from the same origin (or configure CORS correctly for remote assets).
+
+```js
+import { AssetLoader, Sprite } from "../../src/index.js";
+
+const assets = new AssetLoader();
+await assets.loadManifest({
+  hero: "./assets/hero.png",
+  tiles: "./assets/tiles.png"
+});
+const hero = new Sprite(assets.get("hero"), { anchorX: 0.5, anchorY: 0.5 });
+hero.draw(ctx, 100, 100, 48, 48);
 ```
 
-The `src/` directory contains the engine implementation, `examples/` demonstrates its use, and `tests/` contains automated checks.
+Browser-supported image formats can vary. Sprite sheets and tilesets need explicit frame/tile metadata.
 
-## 🗺️ Roadmap
+## Basic physics setup
 
-- [x] Modular engine foundation
-- [x] Core graphics and input systems
-- [x] Physics and collision utilities
-- [x] Automated test and CI infrastructure
-- [ ] Complete physics edge-case validation
-- [ ] Validate viewport and rendering behavior across device-pixel ratios
-- [ ] Establish repeatable performance and memory baselines
-- [ ] Finalize stable public APIs
-- [ ] Complete the 1.0 release checklist
+```js
+import { Entity, Collider, PhysicsBody } from "./src/index.js";
 
-## 🤝 Contributing
+const player = new Entity({ x: 80, y: 80, width: 32, height: 32 });
+player.addComponent(new PhysicsBody({ gravityScale: 1 }));
+player.addComponent(new Collider());
+scene.add(player);
+scene.physics.gravity.y = 900;
+```
 
-Contributions, bug reports, and focused feature proposals are welcome.
+The included solver is a lightweight AABB solver, not a full rigid-body engine. Continuous collision detection covers swept AABB motion for translating bodies, but does not solve rotational motion or guarantee every complex high-speed multi-body case. The engine does not yet provide rotational inertia, joints, general shape casts, one-way platforms, slope handling, or guarantees for stable stacking. Run automated tests and validate the target browser/game workload before shipping.
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes. Include reproduction steps for bugs and tests for changed behavior.
+## Project structure
 
-## 🔐 Security
+```text
+src/
+  core/       Engine, scenes, entities, events, profiler, timers, tweens, storage
+  graphics/   Sprites, animation, camera, viewport, tilemaps, particles, text
+  input/      Keyboard and pointer
+  physics/    Collision helpers, body, collider, world, raycast, spatial hash
+  audio/      Web Audio wrapper
+  assets/     AssetLoader
+examples/
+  box-mover/  Playable demo
+tests/        Automated Node.js tests
+scripts/      Local development server
+```
 
-For security-related concerns, consult [SECURITY.md](SECURITY.md).
+## Release-readiness work still required
 
-## 📄 License
+This is a release candidate, not a stable 1.0 sign-off. Browser integration tests, a cross-browser CI matrix, and benchmark tooling are now included, but the matrix must pass on the actual release commit. Remaining work includes deeper browser lifecycle/audio/asset tests, longer memory soak tests, expanded complex-contact physics validation, gamepad input, accessibility/focus handling, API documentation and a complete sample game. See `RELEASE_CHECKLIST.md` for the explicit release gate.
 
-See the repository's [LICENSE](LICENSE) file for the applicable terms and permissions.
+## License
 
----
-
-<p align="center">
-  <strong>S2DWGE</strong><br />
-  <em>Understand the engine. Build the game. Create your world.</em>
-</p>
+MIT. See `LICENSE`.

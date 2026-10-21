@@ -28,7 +28,14 @@ export class Engine {
     this.running = false; this.paused = false; this.disposed = false;
     this._raf = 0; this._lastTime = 0; this._lastRenderTime = -Infinity; this._accumulator = 0;
     this._boundFrame = t => this._frame(t);
-    this._boundVisibility = () => { if (document.hidden) this.input.clear(); };
+    this._boundVisibility = () => {
+      if (document.hidden) {
+        this.input.clear();
+        this.pointer.clear();
+        this._lastTime = 0;
+        this._accumulator = 0;
+      }
+    };
     document.addEventListener("visibilitychange", this._boundVisibility);
   }
   start(sceneName) {

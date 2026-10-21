@@ -24,6 +24,7 @@ export class Scene {
     const i = this.entities.indexOf(entity);
     if (i < 0) return false;
     this.entities.splice(i, 1);
+    entity.stop();
     for (const component of entity.components) if (component instanceof Collider) this.physics.remove(component);
     entity.scene = null;
     return true;
@@ -36,6 +37,13 @@ export class Scene {
   }
   onStart() {}
   onStop() {}
+  stop() {
+    if (!this._started) return;
+    // Stop entities in reverse order so dependents can release resources first.
+    for (const entity of [...this.entities].reverse()) entity.stop();
+    this._started = false;
+    this.onStop();
+  }
   update(dt) {
     for (const entity of [...this.entities]) entity.update(dt);
     this.physics.step();
@@ -56,7 +64,7 @@ export class Scene {
     for (const { entity } of ordered) entity.render(ctx);
   }
   dispose() {
-    this.onStop();
+    this.stop();
     for (const entity of [...this.entities]) {
       entity.scene = null;
       entity.destroy();

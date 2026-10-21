@@ -25,3 +25,13 @@
 - Added finite-value validation for entity transforms, camera transforms, animation timing, collider masks, and engine render-rate settings.
 - Made `targetFPS` cap rendering while the fixed-step simulation continues to use the requestAnimationFrame accumulator.
 - Expanded regression coverage for CCD, stack stress, lifecycle rollback, invalid input, and spatial-hash overflow.
+
+
+## Unreleased — lifecycle and input resilience
+
+- Fixed scene transitions so the outgoing scene runs its full stop lifecycle and can be started again when re-entered.
+- Added optional component `stop()` lifecycle hooks, invoked in reverse component/entity order when an entity or scene stops.
+- Ensure removing or transferring an entity stops its active components before detaching it, allowing clean re-entry.
+- Clear held pointer-button state and reset frame timing when the document becomes hidden, preventing stuck input and large resume deltas.
+- Added regression tests for scene switching, stop/restart ordering, entity removal/re-addition, and pointer cancellation.
+- This milestone does not claim cross-browser validation; Playwright's Node test runner is not installed in the current working environment.

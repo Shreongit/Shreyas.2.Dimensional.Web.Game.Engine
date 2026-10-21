@@ -30,12 +30,17 @@ export class PointerManager {
   /** Keep edge events alive until the engine finishes the current frame. */
   update() {}
   clearTransient() { this.justPressed = false; this.justReleased = false; }
+  clear() {
+    if (this.down) this.justReleased = true;
+    this.down = false;
+    this.buttons.clear();
+  }
   dispose() {
     this.canvas.removeEventListener("pointermove", this._move);
     this.canvas.removeEventListener("pointerdown", this._down);
     globalThis.removeEventListener?.("pointerup", this._up);
     globalThis.removeEventListener?.("pointercancel", this._cancel);
     globalThis.removeEventListener?.("blur", this._cancel);
-    this.buttons.clear(); this.down = false; this.clearTransient();
+    this.clear(); this.clearTransient();
   }
 }
