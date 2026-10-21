@@ -1,3 +1,14 @@
+# Changelog
+
+All notable project changes are recorded here. Dates and version labels reflect the package metadata in this archive.
+
+## Unreleased — Cross-browser CI verification and documentation refresh
+
+- Recorded successful GitHub Actions push checks for Chromium, Firefox, and WebKit browser jobs.
+- Recorded successful Node.js 18, 20, and 22 unit-test matrix jobs.
+- Clarified repository setup, local serving, starter-game initialization, and the distinction between release-candidate validation and stable release sign-off.
+- Updated release-readiness notes to retain the remaining clean-install/dependency-audit and maintainer sign-off gates.
+
 ## Unreleased — Release-candidate packaging verification
 
 - Generated and committed a `package-lock.json` from the declared package metadata to support reproducible dependency resolution.
@@ -17,8 +28,6 @@
 - Added Starfall Survival, a complete playable sample game demonstrating custom components, keyboard movement, dynamically spawned hazards, collision/game-over handling, pause, and restart.
 - Included the sample game in the generated distribution and added a regression test for its files and runtime import.
 - Expanded API documentation and release checklist with sample-game and dependency-review gates.
-
-# Changelog
 
 ## Unreleased — Asset and audio reliability
 

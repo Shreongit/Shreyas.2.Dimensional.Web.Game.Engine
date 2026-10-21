@@ -8,8 +8,8 @@ A passing unit suite is necessary but not sufficient for a stable 1.0 release. D
 - [x] Repeatable physics benchmark runner added (`npm run benchmark`).
 - [x] Browser integration test suite added for Chromium, Firefox, and WebKit.
 - [x] CI workflow configured for Node 18/20/22 and a per-browser Playwright matrix.
-- [ ] CI has completed successfully on the release commit for all Node versions and browsers.
-- [ ] Browser matrix has been executed and results reviewed. The current authoring environment blocks Chromium automation and does not contain runnable Firefox/WebKit binaries, so no local browser-pass claim is made.
+- [x] GitHub Actions screenshot provided by maintainer shows all Node 18/20/22 unit jobs and Chromium/Firefox/WebKit browser jobs successful on the pushed commit. Reconfirm against the exact final release commit after any subsequent changes.
+- [x] Maintainer reports local browser suite passed; GitHub Actions screenshot confirms Chromium, Firefox, and WebKit jobs passed on the pushed commit. Re-run after release changes.
 
 ## Runtime and physics
 - [x] Regression coverage for swept-AABB fast impacts, trigger contacts, layer/mask filtering, contact exits, finite stack stress, and collider scaling.
@@ -20,7 +20,7 @@ A passing unit suite is necessary but not sufficient for a stable 1.0 release. D
 ## Graphics, viewport, and memory
 - [x] Node-level viewport regressions cover letterboxing, high-DPI coordinate round-trips, zero-size recovery, observer cleanup, and invalid configuration.
 - [x] Viewport integration tests cover 800x600, 1365x768, 1920x1080, 390x844@2x, and 1440x900@3x in the browser suite.
-- [ ] Browser suite passes on each supported browser and DPR configuration.
+- [x] Browser CI jobs passed for Chromium, Firefox, and WebKit on the pushed commit (per maintainer-provided screenshot); repeat for the final release commit and review DPR coverage.
 - [ ] Reference-device benchmark results and performance budgets are recorded; timings are machine-dependent and must not be generalized from one host.
 - [ ] Memory/leak soak tests cover repeated scene transitions, event subscriptions, asset loading, and disposal.
 
@@ -32,7 +32,7 @@ A passing unit suite is necessary but not sufficient for a stable 1.0 release. D
 - [ ] Maintainer explicitly signs off on known issues.
 
 ## Release status
-**Not signed off as stable 1.0.** This repository contains the release-gate tooling and candidate changes, but browser CI has not been run from this environment. Promote to stable only after the unchecked release gates are satisfied; do not infer a pass from tests being configured.
+**Release candidate, not signed off as stable 1.0.** The maintainer-provided GitHub Actions screenshot shows all six unit/browser checks passing. Network-backed clean install, dependency audit, remaining review items, and explicit maintainer sign-off remain separate gates. Re-run checks against the final release commit.
 
 
 ## Distribution consumer validation

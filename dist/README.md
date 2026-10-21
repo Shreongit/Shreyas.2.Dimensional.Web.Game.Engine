@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Status-Release%20Candidate-orange?style=for-the-badge" alt="Release Candidate" />
+  <img src="https://img.shields.io/badge/Status-Release%20Candidate-orange?style=for-the-badge" alt="Release Candidate — not stable 1.0 yet" />
   <img src="https://img.shields.io/badge/Language-JavaScript-yellow?style=for-the-badge&logo=javascript&logoColor=white" alt="JavaScript" />
   <img src="https://img.shields.io/badge/Rendering-HTML5%20Canvas-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5 Canvas" />
   <img src="https://img.shields.io/badge/Modules-ESM-blue?style=for-the-badge" alt="ES Modules" />
@@ -153,34 +153,33 @@ The diagram represents the intended high-level organization; individual utilitie
 - npm
 - A modern browser with HTML5 Canvas and ES-module support
 
-### Installation
+### Installation and initialization
 
-Clone the repository:
+**Requirements:** Node.js 18 or newer, npm, and a modern browser with HTML5 Canvas and ES-module support.
+
+Clone the repository and install the development dependencies:
 
 ```bash
 git clone https://github.com/Shreongit/Shreyas.2.Dimensional.Web.Game.Engine.git
 cd Shreyas.2.Dimensional.Web.Game.Engine
+npm ci
 ```
 
-Install the development dependencies:
-
-```bash
-npm install
-```
-
-Start the local development server:
+Start the local server:
 
 ```bash
 npm run serve
 ```
 
-Open the local address printed in your terminal and navigate to the BoxMover Arena example if it is not opened automatically.
+Open the local URL printed by the server. The repository example is in `examples/box-mover/`; the generated distribution also includes `dist/starter-game/` and `dist/sample-game/`. Serve these files over HTTP rather than opening ES-module files directly with `file://`.
 
-### Your First Game
+If `npm ci` fails because the npm registry cannot be reached, check your network connection and retry; do not treat an incomplete install as a successful setup.
 
-S2DWGE is intended to support reusable game projects rather than a single fixed game. A typical project will initialize the engine, create scenes, add entities and components, load assets, process player input, and render gameplay.
+### Initialize a game
 
-For the exact initialization sequence and public APIs, start with the working example and the corresponding source modules. API stability is not guaranteed for every subsystem yet.
+The most reliable starting point is the complete starter template: `templates/starter-game/` (or `dist/starter-game/` after building). Copy the template into your game project and adapt its `index.html`, `style.css`, and `game.js`. Keep the ES-module imports and relative paths intact, then run the game through a local HTTP server.
+
+For development, run `npm run build` to regenerate the distribution. The public named exports are listed in [`docs/API_REFERENCE.md`](docs/API_REFERENCE.md); consult the examples and API reference for the actual constructors and options supported by this release candidate. APIs are still subject to change before stable 1.0.
 
 ## 🧪 Development
 
@@ -231,17 +230,18 @@ S2DWGE/
 
 The `src/` directory contains the engine implementation, `examples/` demonstrates its use, and `tests/` contains automated checks.
 
-## 🗺️ Roadmap
+## 🗺️ Release readiness
 
-- [x] Modular engine foundation
-- [x] Core graphics and input systems
-- [x] Physics and collision utilities
-- [x] Automated test and CI infrastructure
-- [ ] Complete physics edge-case validation
-- [ ] Validate viewport and rendering behavior across device-pixel ratios
-- [ ] Establish repeatable performance and memory baselines
-- [ ] Finalize stable public APIs
-- [ ] Complete the 1.0 release checklist
+- [x] Modular engine foundation and core graphics/input systems
+- [x] Physics and collision utilities with documented AABB-focused limitations
+- [x] Unit, API-contract, distribution, lifecycle-soak, and packed-consumer checks
+- [x] GitHub Actions browser matrix passed for Chromium, Firefox, and WebKit on the pushed commit (see the repository's Checks tab)
+- [x] GitHub Actions unit matrix passed for Node.js 18, 20, and 22 on the pushed commit
+- [ ] Complete network-backed clean-install and dependency-audit review
+- [ ] Review and sign off remaining release checklist items and known limitations
+- [ ] Promote from `1.0.0-rc.2` to stable `1.0.0` only after explicit release sign-off
+
+**Current package version:** `1.0.0-rc.2` (release candidate, not yet stable 1.0). See [`RELEASE_STATUS.md`](RELEASE_STATUS.md) and [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md) for the current gates.
 
 ## 🤝 Contributing
 
