@@ -3,9 +3,8 @@ on:
   push:
   pull_request:
   workflow_dispatch:
-
 jobs:
-  test:
+  unit:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -17,3 +16,18 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm run ci
+      - run: npm run benchmark
+  browser:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save @playwright/test
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - run: npx playwright test --project=${{ matrix.browser }}

@@ -4,7 +4,7 @@
 
 S2DWGE is a modular JavaScript 2D game-engine foundation for modern browsers. It uses HTML5 Canvas and native ES modules, has no runtime dependencies, and includes a playable demo and automated Node.js tests.
 
-> **Project status:** `1.0.0-rc.1` release candidate. Core systems have expanded automated regression coverage, but this is not a claim of production certification. Browser integration across supported engines, reference performance benchmarks, and full release sign-off remain outstanding. See `CHANGELOG.md` and `RELEASE_CHECKLIST.md`.
+> **Project status:** `1.0.0-rc.2` release candidate. This version adds cross-browser Playwright test infrastructure, viewport/DPR checks, and a repeatable physics benchmark. The browser matrix could not be executed in the authoring environment, so the engine is not signed off as stable 1.0. See `CHANGELOG.md` and `RELEASE_CHECKLIST.md`.
 
 ## Systems
 
@@ -25,9 +25,12 @@ Requires Node.js 18 or newer.
 npm test
 npm run check
 npm run serve
+npm run benchmark
 ```
 
 Open <http://localhost:5173>. Move with WASD or arrow keys, hold Shift to sprint, and press P to pause/resume. Use a local HTTP server; browser ES module imports may not work from `file://`.
+
+For cross-browser integration tests, install the development dependency and browser binaries, then run `npm run test:browser`. The configured matrix targets Chromium, Firefox, and WebKit. `npm run benchmark` reports workload timings and process memory for comparison; timings are machine-specific.
 
 ## Load custom artwork
 
@@ -79,15 +82,7 @@ scripts/      Local development server
 
 ## Release-readiness work still required
 
-This repository is a main-release candidate, not a claim of production certification. Before declaring a stable 1.0 release, address these items:
-
-1. Add browser-based integration tests and CI across Chromium, Firefox and WebKit.
-2. Expand collision stress tests for stacking, corner cases, multi-body impacts, and continuous-collision edge cases; document physics ordering and solver limits.
-3. Add gamepad input, focus/accessibility handling, audio lifecycle tests and error reporting.
-4. Add asset atlas tooling, cache invalidation, content validation and preload failure policy.
-5. Add a real sample game with levels, collisions, menus and save/load.
-6. Add profiling benchmarks, memory/leak tests, versioned API docs and migration policy.
-7. Add bundling/minification, source maps, deployment guidance and a release workflow.
+This is a release candidate, not a stable 1.0 sign-off. Browser integration tests, a cross-browser CI matrix, and benchmark tooling are now included, but the matrix must pass on the actual release commit. Remaining work includes deeper browser lifecycle/audio/asset tests, longer memory soak tests, expanded complex-contact physics validation, gamepad input, accessibility/focus handling, API documentation and a complete sample game. See `RELEASE_CHECKLIST.md` for the explicit release gate.
 
 ## License
 
