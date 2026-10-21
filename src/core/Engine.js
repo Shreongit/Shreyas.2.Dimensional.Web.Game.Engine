@@ -7,14 +7,18 @@ import { Logger } from "./Logger.js";
 
 /** Browser game loop with clamped delta time, pause/resume, and explicit disposal. */
 export class Engine {
-  constructor(canvas, { width = 960, height = 540, background = "#10131c", maxDelta = 0.1, targetFPS = 0, debug = false, audio = true } = {}) {
+  constructor(canvas, { width = 960, height = 540, background = "#10131c", maxDelta = 0.1, fixedDelta = 1 / 60, maxSubSteps = 5, targetFPS = 0, debug = false, audio = true } = {}) {
     if (!canvas?.getContext) throw new TypeError("Engine requires a canvas element.");
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     if (!this.ctx) throw new Error("2D canvas context is unavailable.");
     this.width = width; this.height = height; this.background = background;
     this.profiler = new Profiler(); this.logger = new Logger("S2DWGE", "warn");
-    this.maxDelta = maxDelta; this.targetFPS = targetFPS; this.debug = debug;
+    if (!Number.isFinite(maxDelta) || maxDelta <= 0) throw new RangeError("maxDelta must be a positive finite number");
+    if (!Number.isFinite(fixedDelta) || fixedDelta <= 0) throw new RangeError("fixedDelta must be a positive finite number");
+    if (!Number.isInteger(maxSubSteps) || maxSubSteps < 1) throw new RangeError("maxSubSteps must be a positive integer");
+    this.maxDelta = maxDelta; this.fixedDelta = fixedDelta; this.maxSubSteps = maxSubSteps;
+    this.targetFPS = targetFPS; this.debug = debug;
     canvas.width = width; canvas.height = height;
     this.input = new InputManager();
     this.pointer = new PointerManager(canvas);
@@ -35,8 +39,8 @@ export class Engine {
     }
     return this;
   }
-  pause() { this.paused = true; this.input.clearTransient(); }
-  resume() { if (this.disposed) return; this.paused = false; this._lastTime = 0; }
+  pause() { this.paused = true; this._accumulator = 0; this.input.clearTransient(); }
+  resume() { if (this.disposed) return; this.paused = false; this._accumulator = 0; this._lastTime = 0; }
   stop() {
     this.running = false;
     if (this._raf) cancelAnimationFrame(this._raf);
@@ -51,20 +55,34 @@ export class Engine {
     this.pointer.update();
     this.input.update();
     if (this.input.pressed("KeyP")) this.paused = !this.paused;
-    if (!this.paused) this.scenes.update(dt);
+    if (this.paused) {
+      this._accumulator = 0;
+    } else {
+      this._accumulator += dt;
+      let steps = 0;
+      while (this._accumulator >= this.fixedDelta && steps < this.maxSubSteps) {
+        this.scenes.update(this.fixedDelta);
+        this._accumulator -= this.fixedDelta;
+        steps++;
+      }
+      // Drop excess backlog after a stall instead of entering a spiral of death.
+      if (steps === this.maxSubSteps && this._accumulator >= this.fixedDelta) this._accumulator = 0;
+    }
     this.input.clearTransient();
+    this.pointer.clearTransient();
     this._render();
     this._raf = requestAnimationFrame(this._boundFrame);
   }
   _render() {
     const ctx = this.ctx;
     ctx.save();
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.fillStyle = this.background;
-    ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.scenes.render(ctx);
-    if (this.debug) this._renderDebug(ctx);
-    ctx.restore();
+    try {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = this.background;
+      ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      this.scenes.render(ctx);
+      if (this.debug) this._renderDebug(ctx);
+    } finally { ctx.restore(); }
   }
   _renderDebug(ctx) {
     ctx.save();

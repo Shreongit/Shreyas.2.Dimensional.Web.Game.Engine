@@ -4,6 +4,15 @@ import { Entity } from "../src/core/Entity.js";
 import { Scene } from "../src/core/Scene.js";
 import { Collider } from "../src/physics/Collider.js";
 import { PhysicsBody } from "../src/physics/PhysicsBody.js";
+import { PhysicsWorld } from "../src/physics/PhysicsWorld.js";
+
+function addBody(scene, { x=0, y=0, width=10, height=10, body={}, collider={} } = {}) {
+  const entity = new Entity({ x, y, width, height });
+  if (body !== null) entity.addComponent(new PhysicsBody(body));
+  const shape = entity.addComponent(new Collider(collider));
+  scene.add(entity);
+  return { entity, body: entity.getComponent(PhysicsBody), collider: shape };
+}
 
 test("collider added after entity enters scene is registered", () => {
   const scene = new Scene("test");
@@ -15,14 +24,58 @@ test("collider added after entity enters scene is registered", () => {
   assert.equal(scene.physics.colliders.has(collider), false);
 });
 test("physics world resolves overlap against a static collider", () => {
-  const scene = new Scene("physics");
-  scene.physics.gravity.y = 0;
-  const dynamic = new Entity({x:0,y:0,width:10,height:10});
-  dynamic.addComponent(new PhysicsBody({vx:0,vy:0}));
-  dynamic.addComponent(new Collider());
-  const wall = new Entity({x:8,y:0,width:10,height:10});
-  wall.addComponent(new Collider());
-  scene.add(dynamic); scene.add(wall);
+  const scene = new Scene("physics"); scene.physics.gravity.y = 0;
+  const dynamic = addBody(scene, { x:0 });
+  addBody(scene, { x:8, body:null });
   scene.physics.step();
-  assert.ok(dynamic.x < 0, `expected dynamic entity to be separated, got x=${dynamic.x}`);
+  assert.ok(dynamic.entity.x < 0, `expected dynamic entity to be separated, got x=${dynamic.entity.x}`);
+});
+test("broad phase avoids duplicate contact callbacks", () => {
+  const scene = new Scene(); scene.physics.gravity.y = 0;
+  addBody(scene, { x:0 }); addBody(scene, { x:8, body:null });
+  let calls = 0; scene.physics.onCollisionEnter = () => calls++;
+  scene.physics.step(); scene.physics.step();
+  assert.equal(calls, 1);
+});
+test("collision exit fires when objects separate", () => {
+  const scene = new Scene(); scene.physics.gravity.y = 0;
+  const a = addBody(scene, { x:0 }); addBody(scene, { x:8, body:null });
+  let exits = 0; scene.physics.onCollisionExit = () => exits++;
+  scene.physics.step(); a.entity.x = -100; scene.physics.step();
+  assert.equal(exits, 1);
+});
+test("layer and mask filters suppress contacts", () => {
+  const scene = new Scene(); scene.physics.gravity.y = 0;
+  addBody(scene, { x:0, collider:{ layer:1, mask:1 } });
+  addBody(scene, { x:8, body:null, collider:{ layer:2, mask:2 } });
+  let calls = 0; scene.physics.onCollision = () => calls++;
+  scene.physics.step(); assert.equal(calls, 0);
+});
+test("trigger contacts are reported without physical separation", () => {
+  const scene = new Scene(); scene.physics.gravity.y = 0;
+  const a = addBody(scene, { x:0, collider:{ isTrigger:true } });
+  addBody(scene, { x:8, body:null });
+  scene.physics.step(); assert.equal(a.entity.x, 0);
+});
+test("mass affects impulse response and validates input", () => {
+  const body = new PhysicsBody({ mass:2 });
+  body.applyImpulse(10, 0); assert.equal(body.vx, 5);
+  assert.throws(() => new PhysicsBody({ mass:0 }), RangeError);
+  assert.throws(() => body.applyForce(NaN, 0), TypeError);
+});
+test("force is integrated over time", () => {
+  const scene = new Scene(); scene.physics.gravity.x = 0; scene.physics.gravity.y = 0;
+  const { body } = addBody(scene, { body:{ mass:2 } });
+  body.applyForce(10, 0); body.update(0.5);
+  assert.equal(body.vx, 2.5);
+});
+test("physics world validates solver settings", () => {
+  assert.throws(() => new PhysicsWorld({ solverIterations:0 }), RangeError);
+});
+
+test("collider bounds account for entity scale and scaled offsets", () => {
+  const scene = new Scene();
+  const { collider } = addBody(scene, { x:10, y:20, width:8, height:6, collider:{ offsetX:2, offsetY:-1 } });
+  collider.entity.scaleX = 2; collider.entity.scaleY = 3;
+  assert.deepEqual(collider.bounds, { x:14, y:17, width:16, height:18 });
 });

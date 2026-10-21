@@ -43,9 +43,17 @@ export class Scene {
     this.entities = this.entities.filter(e => !e._destroyed);
   }
   render(ctx) {
-    if (this.camera) { ctx.save(); this.camera.apply(ctx, this.engine.width, this.engine.height); }
-    for (const entity of this.entities) entity.render(ctx);
-    if (this.camera) ctx.restore();
+    const ordered = this.entities.map((entity, index) => ({ entity, index }))
+      .sort((a, b) => a.entity.renderOrder - b.entity.renderOrder || a.index - b.index);
+    if (this.camera) {
+      ctx.save();
+      try {
+        this.camera.apply(ctx, this.engine.width, this.engine.height);
+        for (const { entity } of ordered) entity.render(ctx);
+      } finally { ctx.restore(); }
+      return;
+    }
+    for (const { entity } of ordered) entity.render(ctx);
   }
   dispose() {
     this.onStop();

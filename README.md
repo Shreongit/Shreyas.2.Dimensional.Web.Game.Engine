@@ -8,11 +8,11 @@ S2DWGE is a modular JavaScript 2D game-engine foundation for modern browsers. It
 
 ## Systems
 
-- **Runtime:** animation-frame loop, delta-time clamp, pause/resume, lifecycle disposal, frame-time profiler and debug overlay.
+- **Runtime:** fixed-step simulation accumulator, clamped frame delta, bounded catch-up steps, pause/resume, lifecycle disposal, frame-time profiler and debug overlay.
 - **World model:** entities, components, scenes and scene switching.
-- **Graphics:** sprites, animation, text and rectangle components, camera transforms, logical viewport fitting, tilemap drawing and particles.
+- **Graphics:** sprites, animation, text and rectangle components, stable render-order layers, exception-safe canvas state, camera transforms, logical viewport fitting, tilemap drawing and particles.
 - **Input:** keyboard state/actions and pointer state.
-- **Physics:** velocity/gravity body, AABB and circle overlap helpers, colliders, discrete collision resolution, tile collision queries, ray-vs-AABB and spatial hash broad-phase utility.
+- **Physics:** mass-aware forces and impulses, gravity/drag/speed limits, scaled AABB colliders, collision layer/mask filtering, grid broad-phase candidate generation, iterative positional correction, restitution, trigger contacts and enter/stay/exit events, plus overlap helpers and ray-vs-AABB.
 - **Assets/audio:** image and audio manifest loader with progress/errors; optional Web Audio wrapper.
 - **Utilities:** event emitter, logger, profiler, timers, tweens and namespaced JSON storage.
 - **Tests:** Node test coverage for selected utility and engine logic.
@@ -59,7 +59,7 @@ scene.add(player);
 scene.physics.gravity.y = 900;
 ```
 
-The included solver is discrete and intentionally lightweight. It is not a complete rigid-body solver and does not guarantee robust continuous collision detection, joints, friction, slopes, or stable stacking.
+The included solver is a lightweight AABB solver, not a full rigid-body engine. It does not yet provide continuous collision detection, rotational inertia, joints, shape casts, one-way platforms, slope handling, or guarantees for stable stacking. Fast-moving bodies may still tunnel through thin colliders. Run the automated tests and validate the target browser/game workload before shipping.
 
 ## Project structure
 
@@ -77,9 +77,9 @@ tests/        Automated Node.js tests
 scripts/      Local development server
 ```
 
-## Production-readiness gaps
+## Release-readiness work still required
 
-Before marketing S2DWGE as production-ready, address these items:
+This is a stronger release candidate, not a production certification. Before declaring a stable 1.0 release, address these items:
 
 1. Add browser-based integration tests and CI across Chromium, Firefox and WebKit.
 2. Finish robust collision resolution, continuous collision detection, and documented physics ordering.
