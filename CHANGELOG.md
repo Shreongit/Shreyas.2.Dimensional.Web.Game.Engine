@@ -1,3 +1,10 @@
+## Unreleased — Release-candidate packaging verification
+
+- Generated and committed a `package-lock.json` from the declared package metadata to support reproducible dependency resolution.
+- Verified the published package file list with `npm pack --dry-run`; the package includes the engine source, generated distribution, starter and sample games, documentation, changelog, and license.
+- Re-ran syntax, unit/regression, distribution, API contract, and lifecycle soak checks successfully on Node.js 22.16.0.
+- Clean install and dependency audit remain unverified because npm registry access failed with `EAI_AGAIN` in this environment; do not treat lockfile generation alone as a successful clean-install or security audit.
+
 ## Unreleased — Viewport test hardening milestone
 
 - Reworked viewport unit tests to restore global browser mocks safely, including when assertions fail.

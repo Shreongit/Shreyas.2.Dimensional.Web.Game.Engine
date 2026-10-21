@@ -56,10 +56,20 @@ A passing unit suite is necessary but not sufficient for a stable 1.0 release. D
 ## API contract and supply-chain review (current milestone)
 - [x] Add automated checks that the documented public export names exist.
 - [x] Document static deployment, MIME types, HTTPS, CSP starting guidance, and client-trust boundaries.
-- [ ] Add and review a committed lockfile so clean installs can use `npm ci` reproducibly.
+- [x] Generate a `package-lock.json` from declared package metadata; verify clean install in a network-enabled CI environment before release.
 - [ ] Run `npm audit` or equivalent against the committed lockfile and review each finding.
 - [ ] Verify the package from a clean consumer directory using a packed artifact, not only repository-relative imports.
 - [ ] Confirm CSP guidance against the final starter/sample game and real browser behavior.
 
 ## Evidence note
-A local attempt to run `npm ci` is currently blocked because the checkout has no `package-lock.json`. Generating the lockfile timed out in the current environment; no lockfile or audit result is claimed by this milestone. Do not promote to stable until this is resolved in a network-enabled environment and reviewed.
+A `package-lock.json` has now been generated and included. A local `npm ci` attempt failed because the environment could not resolve `registry.npmjs.org` (`EAI_AGAIN`); this is an environment/network failure, not evidence that installation succeeded. `npm audit` was not completed. The clean install and dependency audit remain release blockers until run successfully in network-enabled CI and reviewed.
+
+
+## Release-candidate packaging verification (current milestone)
+- [x] Generate package lockfile from declared dependencies.
+- [x] Verify package contents using `npm pack --dry-run`.
+- [x] Run `npm run ci`, `npm run build:check`, `npm run test:api`, and `npm run test:soak` on Node.js 22.16.0.
+- [ ] Run `npm ci` successfully in network-enabled CI.
+- [ ] Run and review `npm audit` against the lockfile.
+- [ ] Run and review Chromium, Firefox, and WebKit browser jobs on the exact release commit.
+- [ ] Verify the packed artifact in a separate clean consumer project.
