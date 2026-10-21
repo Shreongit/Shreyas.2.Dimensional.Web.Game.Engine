@@ -73,3 +73,10 @@ A `package-lock.json` has now been generated and included. A local `npm ci` atte
 - [ ] Run and review `npm audit` against the lockfile.
 - [ ] Run and review Chromium, Firefox, and WebKit browser jobs on the exact release commit.
 - [ ] Verify the packed artifact in a separate clean consumer project.
+
+## Packed consumer smoke milestone (2026-10-21)
+- [x] Added `npm run test:consumer` to pack the current package, install the tarball into an isolated temporary consumer project, and import-check core public exports.
+- [x] Packed consumer smoke test passed locally using offline installation: `Engine`, `Scene`, `Entity`, `Viewport`, and `PhysicsWorld` imported successfully.
+- [ ] `npm ci` on the repository lockfile still needs a successful network-enabled CI run; the local attempt timed out while registry access was unavailable.
+- [ ] `npm audit` still needs a successful registry-backed run and review; the local audit failed to reach `registry.npmjs.org` (`EAI_AGAIN`).
+- [ ] Playwright browser matrix still requires a compatible Playwright Test CLI and successful Chromium, Firefox, and WebKit runs on the exact release commit. The local `npm run test:browser` currently reports `unknown command 'test'`.

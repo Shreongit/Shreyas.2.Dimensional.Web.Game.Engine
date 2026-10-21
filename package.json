@@ -14,7 +14,8 @@
     "build": "node scripts/build.mjs",
     "build:check": "npm run build && node --test tests/distribution.test.js",
     "test:api": "node --test tests/api-contract.test.js",
-    "test:soak": "node --test tests/lifecycle-soak.test.js"
+    "test:soak": "node --test tests/lifecycle-soak.test.js",
+    "test:consumer": "node scripts/consumer-smoke.mjs"
   },
   "engines": {
     "node": ">=18"

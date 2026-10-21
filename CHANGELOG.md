@@ -79,3 +79,8 @@
 - Added `docs/API_REFERENCE.md` documenting the current public entry-point exports and subsystem boundaries.
 - Added a lifecycle soak regression test covering 250 scene create/start/update/remove/dispose cycles with eight entities per scene. The test verifies balanced component start/stop/detach calls and no retained scene ownership.
 - Added `npm run test:soak` for targeted lifecycle stress validation.
+
+## Unreleased — Release verification follow-up
+
+- Added `npm run test:consumer`, which packs the project, installs the generated tarball into an isolated temporary consumer project, and verifies key public API exports can be imported from the installed package.
+- Recorded successful offline packed-consumer validation and kept registry-dependent clean install/security audit and browser-matrix gates explicitly open.
