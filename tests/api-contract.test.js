@@ -23,7 +23,7 @@ test("package metadata exposes an ESM entry point and supported Node baseline", 
   assert.equal(packageJson.type, "module");
   assert.equal(packageJson.exports["."], "./src/index.js");
   assert.equal(packageJson.engines.node, ">=18");
-  assert.equal(packageJson.license, "MIT");
+  assert.equal(packageJson.license, "UNLICENSED");
 });
 
 test("API reference calls out release-candidate status and physics scope", async () => {

@@ -20,7 +20,7 @@ test("production distribution contains runtime entry, package metadata and start
   assert.match(html, /type="module"/);
   assert.match(game, /\.\.\/engine\/index\.js/);
   assert.match(css, /canvas/);
-  assert.match(license, /MIT License/);
+  assert.match(license, /PROPRIETARY LICENSE — EDUCATIONAL VIEWING ONLY/);
 });
 
 test("distribution starter imports a runtime file included in distribution", async () => {
