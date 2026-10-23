@@ -7,6 +7,7 @@ import { SpatialHash } from "./SpatialHash.js";
  * velocities use world-units/second. This is not a rotational rigid-body solver.
  */
 export class PhysicsWorld {
+  static _nextId = 1;
   // FIX: Properly initialize static sequence pointer for distinct entity tags
   static _nextId = 1;
 

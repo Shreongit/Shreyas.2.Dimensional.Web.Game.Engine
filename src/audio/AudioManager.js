@@ -12,8 +12,7 @@ export class AudioManager {
       this.master.connect(this.context.destination);
     }
     this.buffers = new Map();
-    // Track pairs of { source, gain } to cleanly dispose of node routes later
-    this.activeNodes = new Set();
+    this.sources = new Set();
     this.disposed = false;
   }
 
@@ -34,14 +33,11 @@ export class AudioManager {
     if (typeof name !== "string" || !name.trim()) throw new TypeError("Audio asset name must be a non-empty string.");
     if (typeof url !== "string" || !url.trim()) throw new TypeError("Audio URL must be a non-empty string.");
     if (!this.context) return false;
-    
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Audio load failed (${response.status}): ${url}`);
     const bytes = await response.arrayBuffer();
-    
     this._assertActive();
     
-    // FIX: Web Audio standard fallback wrapping for older desktop browsers and iOS Safari
     const buffer = await new Promise((resolve, reject) => {
       this.context.decodeAudioData(bytes, resolve, reject);
     });
@@ -56,49 +52,42 @@ export class AudioManager {
     if (!Number.isFinite(volume)) throw new TypeError("Playback volume must be a finite number.");
     const buffer = this.buffers.get(name);
     if (!this.context || !buffer) return null;
-    
     const source = this.context.createBufferSource();
     const gain = this.context.createGain();
-    
     source.buffer = buffer;
     source.loop = Boolean(loop);
     gain.gain.value = Math.max(0, Math.min(1, volume));
-    
     source.connect(gain);
     gain.connect(this.master);
     
-    const nodePair = { source, gain };
-    this.activeNodes.add(nodePair);
+    this.sources.add(source);
     
-    // FIX: Completely tear down and disconnect BOTH nodes when audio terminates to prevent memory leakage
     source.addEventListener("ended", () => {
-      if (this.activeNodes.has(nodePair)) {
+      if (this.sources.has(source)) {
         try { source.disconnect(); } catch {}
         try { gain.disconnect(); } catch {}
-        this.activeNodes.delete(nodePair);
+        this.sources.delete(source);
       }
     }, { once: true });
     
     try {
       source.start();
     } catch (error) {
-      this.activeNodes.delete(nodePair);
+      this.sources.delete(source);
       try { source.disconnect(); } catch {}
       try { gain.disconnect(); } catch {}
       throw error;
     }
-    
     return source;
   }
 
   stopAll() {
     if (this.disposed) return;
-    for (const node of this.activeNodes) {
-      try { node.source.stop(); } catch {}
-      try { node.source.disconnect(); } catch {}
-      try { node.gain.disconnect(); } catch {}
+    for (const source of this.sources) {
+      try { source.stop(); } catch {}
+      try { source.disconnect(); } catch {}
     }
-    this.activeNodes.clear();
+    this.sources.clear();
   }
 
   async dispose() {
@@ -106,12 +95,10 @@ export class AudioManager {
     this.stopAll();
     this.buffers.clear();
     this.master?.disconnect();
-    
     const context = this.context;
     this.context = null;
     this.master = null;
     this.disposed = true;
-    
     if (context && context.state !== "closed") await context.close();
   }
 
