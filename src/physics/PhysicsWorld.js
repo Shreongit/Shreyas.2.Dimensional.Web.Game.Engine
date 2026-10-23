@@ -278,44 +278,34 @@ export class PhysicsWorld {
     const bodyB = b.entity.getComponent(PhysicsBody);
     const moveA = this._moves(bodyA);
     const moveB = this._moves(bodyB);
-
     const invA = moveA ? 1 / bodyA.mass : 0;
     const invB = moveB ? 1 / bodyB.mass : 0;
     const total = invA + invB;
     if (!total) return;
-
     const correction = Math.max(hit.penetration - this.penetrationSlop, 0) / total * this.positionCorrection;
     const cx = hit.nx * correction;
     const cy = hit.ny * correction;
-
     if (moveA) { a.entity.x -= cx * invA; a.entity.y -= cy * invA; }
     if (moveB) { b.entity.x += cx * invB; b.entity.y += cy * invB; }
-
     this._applyImpulse(bodyA, bodyB, hit.nx, hit.ny, invA, invB);
     if (moveA && hit.ny < 0) bodyA.grounded = true;
     if (moveB && hit.ny > 0) bodyB.grounded = true;
   }
 
   _applyImpulse(bodyA, bodyB, nx, ny, invA, invB) {
-    if (!bodyA && !bodyB) return;
-
     const vxA = bodyA ? bodyA.velocityX : 0;
     const vyA = bodyA ? bodyA.velocityY : 0;
     const vxB = bodyB ? bodyB.velocityX : 0;
     const vyB = bodyB ? bodyB.velocityY : 0;
-
     const rvx = vxB - vxA;
     const rvy = vyB - vyA;
     const velAlongNormal = rvx * nx + rvy * ny;
     if (velAlongNormal > 0) return;
-
     const restitution = Math.min(bodyA?.restitution ?? 0, bodyB?.restitution ?? 0);
-    let impulseScalar = -(1 + restitution) * velAlongNormal;
-    impulseScalar /= (invA + invB);
-
-    const ix = impulseScalar * nx;
-    const iy = impulseScalar * ny;
-
+    let j = -(1 + restitution) * velAlongNormal;
+    j /= (invA + invB);
+    const ix = j * nx;
+    const iy = j * ny;
     if (bodyA && !bodyA.static) { bodyA.velocityX -= ix * invA; bodyA.velocityY -= iy * invA; }
     if (bodyB && !bodyB.static) { bodyB.velocityX += ix * invB; bodyB.velocityY += iy * invB; }
   }
