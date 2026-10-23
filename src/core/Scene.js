@@ -10,8 +10,6 @@ export class Scene {
     this._started = false;
     this.physics = new PhysicsWorld();
     this.camera = null;
-    
-    // Cached mapping pair pool to completely eliminate allocation overhead during rendering
     this._renderPairs = [];
   }
 
@@ -21,7 +19,45 @@ export class Scene {
     if (!this.entities.includes(entity)) this.entities.push(entity);
     entity.scene = this;
     
-    for (let i = 0; i = 0; i--) {
+    for (let i = 0; i < entity.components.length; i++) {
+      const component = entity.components[i];
+      if (component instanceof Collider) this.physics.add(component);
+    }
+    
+    if (this._started) entity.start();
+    return entity;
+  }
+
+  remove(entity) {
+    const i = this.entities.indexOf(entity);
+    if (i < 0) return false;
+    this.entities.splice(i, 1);
+    entity.stop();
+    
+    for (let j = 0; j < entity.components.length; j++) {
+      const component = entity.components[j];
+      if (component instanceof Collider) this.physics.remove(component);
+    }
+    
+    entity.scene = null;
+    return true;
+  }
+
+  start() {
+    if (this._started) return;
+    this._started = true;
+    for (let i = 0; i < this.entities.length; i++) {
+      this.entities[i].start();
+    }
+    this.onStart();
+  }
+
+  onStart() {}
+  onStop() {}
+
+  stop() {
+    if (!this._started) return;
+    for (let i = this.entities.length - 1; i >= 0; i--) {
       this.entities[i].stop();
     }
     this._started = false;
@@ -29,7 +65,6 @@ export class Scene {
   }
 
   update(dt) {
-    // Process loop updates forward securely
     for (let i = 0; i < this.entities.length; i++) {
       this.entities[i].update(dt);
     }
@@ -37,7 +72,6 @@ export class Scene {
     this.physics.step();
     this.camera?.update(dt);
     
-    // Filter out destroyed elements safely
     let writeIndex = 0;
     for (let i = 0; i < this.entities.length; i++) {
       if (!this.entities[i]._destroyed) {
@@ -50,7 +84,6 @@ export class Scene {
   render(ctx) {
     const pairs = this._renderPairs;
     
-    // Synchronize pool size to fit entities cleanly without garbage overhead
     for (let i = 0; i < this.entities.length; i++) {
       if (i >= pairs.length) {
         pairs.push({ entity: null, index: 0 });
@@ -60,14 +93,26 @@ export class Scene {
     }
     pairs.length = this.entities.length;
 
-    // Execute standard stable sort arrangement
     pairs.sort((a, b) => a.entity.renderOrder - b.entity.renderOrder || a.index - b.index);
 
     if (this.camera) {
       ctx.save();
-      try {
-        this.camera.apply(ctx, this.engine.width, this.engine.height);
-        for (let i = 0; i = 0; i--) {
+      this.camera.apply(ctx, this.engine.width, this.engine.height);
+      for (let i = 0; i < pairs.length; i++) {
+        pairs[i].entity.render(ctx);
+      }
+      ctx.restore();
+      return;
+    }
+    
+    for (let i = 0; i < pairs.length; i++) {
+      pairs[i].entity.render(ctx);
+    }
+  }
+
+  dispose() {
+    this.stop();
+    for (let i = this.entities.length - 1; i >= 0; i--) {
       const entity = this.entities[i];
       entity.scene = null;
       entity.destroy();
