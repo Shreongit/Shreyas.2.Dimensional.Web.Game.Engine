@@ -14,40 +14,58 @@ export class Viewport {
     this.offsetX = 0;
     this.offsetY = 0;
     this.disposed = false;
+    
     this._resize = () => this.resize();
     if (autoResize && typeof ResizeObserver !== "undefined") {
+      // FIX: Observe parent container style bounds rather than canvas itself to stop resizing layout loop cascades
+      const parent = canvas.parentElement || canvas;
       this.observer = new ResizeObserver(this._resize);
-      this.observer.observe(canvas);
+      this.observer.observe(parent);
     }
     this.resize();
   }
 
   resize() {
     if (this.disposed) return this;
-    const rect = this.canvas.getBoundingClientRect();
-    // Keep a valid backing store while hidden/zero-sized; the next resize restores the fit.
-    const cssWidth = Math.max(0, rect.width);
-    const cssHeight = Math.max(0, rect.height);
+    
+    // FIX: Read dimension properties safely from bounding frame tree
+    const parent = this.canvas.parentElement;
+    const cssWidth = parent ? parent.clientWidth : window.innerWidth;
+    const cssHeight = parent ? parent.clientHeight : window.innerHeight;
+    
     const dpr = Math.max(1, Math.min(this.maxDPR, globalThis.devicePixelRatio || 1));
     const pixelWidth = Math.max(1, Math.round(cssWidth * dpr));
     const pixelHeight = Math.max(1, Math.round(cssHeight * dpr));
+    
     if (this.canvas.width !== pixelWidth) this.canvas.width = pixelWidth;
     if (this.canvas.height !== pixelHeight) this.canvas.height = pixelHeight;
+    
     if (cssWidth > 0 && cssHeight > 0) {
       this.scale = Math.min(pixelWidth / this.width, pixelHeight / this.height);
       this.offsetX = (pixelWidth - this.width * this.scale) / 2;
       this.offsetY = (pixelHeight - this.height * this.scale) / 2;
     }
+    
     this.canvas.style.imageRendering = this.pixelArt ? "pixelated" : "auto";
     return this;
   }
 
   begin(ctx) {
+    // FIX: Explicitly disable antialiasing filters inside the rendering pipeline context for pixel art
+    if (this.pixelArt) {
+      ctx.imageSmoothingEnabled = false;
+      ctx.mozImageSmoothingEnabled = false;
+      ctx.webkitImageSmoothingEnabled = false;
+      ctx.msImageSmoothingEnabled = false;
+    } else {
+      ctx.imageSmoothingEnabled = true;
+    }
+    
     ctx.setTransform(this.scale, 0, 0, this.scale, this.offsetX, this.offsetY);
     return this;
   }
 
-  /** Convert client coordinates to logical game coordinates (letterbox areas may be outside bounds). */
+  /** Convert client coordinates to logical game coordinates. */
   toLogical(clientX, clientY) {
     const rect = this.canvas.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0 || this.scale <= 0) return { x: 0, y: 0, inside: false };
