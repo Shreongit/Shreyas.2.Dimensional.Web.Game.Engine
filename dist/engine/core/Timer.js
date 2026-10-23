@@ -8,11 +8,19 @@ export class Timer {
   update(dt) {
     if (!this.active || this.completed) return;
     this.elapsed += Math.max(0, dt);
+    
+    // Fix: Handle zero-duration edge case to prevent infinite loops on resets
+    if (this.duration === 0) {
+      this.active = false;
+      this.completed = true;
+      this.callback?.();
+      return;
+    }
+
     while (this.elapsed >= this.duration && this.active) {
-      if (this.duration === 0) { this.active = false; this.completed = true; this.callback?.(); break; }
       this.elapsed -= this.duration;
       this.callback?.();
-      if (!this.repeat) { this.active = false; this.completed = true; }
+      if (!this.repeat) { this.active = false; this.completed = true; break; }
     }
   }
   cancel() { this.active = false; }

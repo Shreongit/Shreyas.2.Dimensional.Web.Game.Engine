@@ -4,6 +4,7 @@ export class PointerManager {
     if (!canvas?.addEventListener || !canvas?.getBoundingClientRect) throw new TypeError("PointerManager requires a canvas-like event target");
     this.canvas = canvas; this.coordinateTransform = coordinateTransform; this.x = 0; this.y = 0; this.inside = false; this.down = false;
     this.justPressed = false; this.justReleased = false; this.buttons = new Set();
+    
     this._move = e => this._position(e);
     this._down = e => {
       this._position(e); this.down = true;
@@ -15,6 +16,7 @@ export class PointerManager {
       this.justReleased = true;
     };
     this._cancel = () => { if (this.down) this.justReleased = true; this.down = false; this.buttons.clear(); };
+    
     canvas.addEventListener("pointermove", this._move);
     canvas.addEventListener("pointerdown", this._down);
     globalThis.addEventListener?.("pointerup", this._up);
@@ -33,7 +35,6 @@ export class PointerManager {
       this.inside = this.x >= 0 && this.y >= 0 && this.x < this.canvas.width && this.y < this.canvas.height;
     }
   }
-  /** Keep edge events alive until the engine finishes the current frame. */
   update() {}
   clearTransient() { this.justPressed = false; this.justReleased = false; }
   clear() {

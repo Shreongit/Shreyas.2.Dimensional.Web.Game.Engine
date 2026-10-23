@@ -34,3 +34,7 @@ Environment: Node.js `v22.16.0`, npm `10.9.2`.
 ## Status
 
 **Release candidate only — not signed off as stable 1.0.** The local unit, build, API, lifecycle, and packed-consumer checks passed, but the network-enabled clean install, authoritative dependency audit, and real-browser matrix remain open gates.
+
+## Addendum — latest pushed CI checks (maintainer-provided evidence)
+
+After the original checkpoint above, the maintainer supplied a GitHub Actions screenshot showing all six push checks successful: Chromium, Firefox, WebKit, and the Node.js 18/20/22 unit-test jobs. The maintainer also reported the local browser suite passing 27/27 tests. This updates the earlier browser-verification status for that pushed commit; it does not independently establish the result for any later commit or prove that network-backed `npm ci` and `npm audit` have passed. Those dependency checks and explicit stable-release sign-off remain open.

@@ -1,17 +1,20 @@
-MIT License
+PROPRIETARY LICENSE — EDUCATIONAL VIEWING ONLY
 
-Copyright (c) 2026 S2DWGE contributors
+Copyright (c) 2026 Shreyas. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+### ⚠️ Educational Use Only — No Copying Allowed
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This repository is **public for educational viewing and technical study**. You may inspect the source code to understand the engine's architecture, logic, mathematics, and general programming concepts.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+|   | **Action**                                                                  | **Permission**                        |
+| - | --------------------------------------------------------------------------- | ------------------------------------- |
+| ✅ | View and study the public source code to learn how the engine is structured | **Permitted**                         |
+| ❌ | Copy or reproduce the source code, or paste it into another project         | **Requires prior written permission** |
+| ❌ | Modify or redistribute the source code                                      | **Requires prior written permission** |
+| ❌ | Incorporate it into another engine, game, library, or product               | **Requires prior written permission** |
+
+Except for the limited permission to view and study the source code described above, no license or other rights are granted, whether by implication, estoppel, or otherwise. All rights are reserved by the copyright holder.
+
+The software is provided for educational viewing and technical study only, without warranty of any kind to the maximum extent permitted by applicable law.
+
+For permission requests, contact the repository owner through the contact method listed on the project's GitHub profile. No permission is granted unless it is provided in writing by the rights holder.

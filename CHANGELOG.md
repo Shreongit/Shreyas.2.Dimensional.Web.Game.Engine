@@ -1,3 +1,13 @@
+## Unreleased — merged PR correctness fixes
+
+- Corrected AABB contact-normal handling so overlap separation moves bodies apart consistently.
+- Corrected impulse resolution to use the actual `PhysicsBody.vx` / `vy` velocity fields and the engine's `bounce` property.
+- Fixed continuous-collision and stacked-body regressions covered by the physics test suite.
+- Replaced lossy 16-bit physics pair and spatial-cell keys with collision-safe coordinate/ID keys.
+- Added regression tests for large physics IDs and spatial coordinates.
+
+Validation in the supplied environment: unit suite 73/73, syntax check, API contract, lifecycle soak, and distribution build checks pass. Browser tests were not run in this environment. The packed-consumer test was blocked by an npm cache permission error, not by a package assertion.
+
 # Changelog
 
 All notable project changes are recorded here. Dates and version labels reflect the package metadata in this archive.

@@ -7,7 +7,7 @@
     <img src="https://img.shields.io/badge/Status-Release%20Candidate-orange?style=for-the-badge" alt="Release Candidate — not stable 1.0" />
     <img src="https://img.shields.io/badge/JavaScript-ES%20Modules-yellow?style=for-the-badge&logo=javascript&logoColor=white" alt="JavaScript ES modules" />
     <img src="https://img.shields.io/badge/Rendering-HTML5%20Canvas-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5 Canvas" />
-    <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge" alt="MIT License" />
+    <img src="https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge" alt="Proprietary license" />
   </p>
   <p>
     <a href="#-overview">Overview</a> ·
@@ -20,6 +20,19 @@
 </div>
 
 ---
+
+## ⚠️ Educational Use Only — No Copying Allowed
+
+This repository is **public for educational viewing and technical study**. You may inspect the source code to understand the engine's architecture, logic, mathematics, and general programming concepts.
+
+|   | **Action**                                                                  | **Permission**                        |
+| - | --------------------------------------------------------------------------- | ------------------------------------- |
+| ✅ | View and study the public source code to learn how the engine is structured | **Permitted**                         |
+| ❌ | Copy or reproduce the source code, or paste it into another project         | **Requires prior written permission** |
+| ❌ | Modify or redistribute the source code                                      | **Requires prior written permission** |
+| ❌ | Incorporate it into another engine, game, library, or product               | **Requires prior written permission** |
+
+See [LICENSE](LICENSE) for the proprietary terms. No other permissions are granted by making this repository publicly viewable.
 
 ## 🧭 Overview
 
@@ -211,7 +224,7 @@ For security-related concerns, follow the instructions in [`SECURITY.md`](SECURI
 
 ## 📄 License
 
-S2DWGE declares the MIT license in its package metadata. Read the repository's [`LICENSE`](LICENSE) file for the applicable terms.
+S2DWGE is proprietary software. Public availability permits educational viewing and technical study only. Read the repository's [`LICENSE`](LICENSE) file for the applicable terms.
 
 ---
 

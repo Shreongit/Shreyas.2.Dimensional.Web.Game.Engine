@@ -36,9 +36,12 @@ export class AudioManager {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Audio load failed (${response.status}): ${url}`);
     const bytes = await response.arrayBuffer();
-    // Disposal may occur while fetch/decode is in flight.
     this._assertActive();
-    const buffer = await this.context.decodeAudioData(bytes);
+    
+    const buffer = await new Promise((resolve, reject) => {
+      this.context.decodeAudioData(bytes, resolve, reject);
+    });
+    
     this._assertActive();
     this.buffers.set(name, buffer);
     return true;
@@ -56,8 +59,17 @@ export class AudioManager {
     gain.gain.value = Math.max(0, Math.min(1, volume));
     source.connect(gain);
     gain.connect(this.master);
+    
     this.sources.add(source);
-    source.addEventListener("ended", () => this.sources.delete(source), { once: true });
+    
+    source.addEventListener("ended", () => {
+      if (this.sources.has(source)) {
+        try { source.disconnect(); } catch {}
+        try { gain.disconnect(); } catch {}
+        this.sources.delete(source);
+      }
+    }, { once: true });
+    
     try {
       source.start();
     } catch (error) {
